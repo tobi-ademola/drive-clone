@@ -1,23 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { ChevronDown, ChevronRight, FileText, Folder, MoreVertical, Check, LayoutGrid, ArrowUpDown } from "lucide-react"
-import { Button } from "~/components/ui/button"
+import { useState } from "react";
+import Link from "next/link";
+import {
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  Folder,
+  MoreVertical,
+  Check,
+  LayoutGrid,
+  ArrowUpDown,
+} from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 // Mock data structure for folders and files
 interface DriveItem {
-  id: string
-  name: string
-  type: "folder" | "file"
-  fileType?: string
-  path: string
-  owner: string
-  lastModified: string
-  fileSize?: string
-  parentId: string | null
+  id: string;
+  name: string;
+  type: "folder" | "file";
+  fileType?: string;
+  path: string;
+  owner: string;
+  lastModified: string;
+  fileSize?: string;
+  parentId: string | null;
 }
 
 // Mock data for the drive with completely fictional data
@@ -147,14 +156,14 @@ const mockDriveData: DriveItem[] = [
     fileSize: "189 KB",
     parentId: "folder5",
   },
-]
+];
 
 // Function to get icon based on file type
 const getFileIcon = (type: string) => {
   switch (type) {
     case "image":
       return (
-        <div className="w-5 h-5 bg-red-500 flex items-center justify-center rounded-sm">
+        <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-red-500">
           <svg viewBox="0 0 24 24" className="h-3 w-3 text-white">
             <path
               fill="currentColor"
@@ -162,10 +171,10 @@ const getFileIcon = (type: string) => {
             />
           </svg>
         </div>
-      )
+      );
     case "pdf":
       return (
-        <div className="w-5 h-5 bg-red-500 flex items-center justify-center rounded-sm">
+        <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-red-500">
           <svg viewBox="0 0 24 24" className="h-3 w-3 text-white">
             <path
               fill="currentColor"
@@ -173,10 +182,10 @@ const getFileIcon = (type: string) => {
             />
           </svg>
         </div>
-      )
+      );
     case "ai":
       return (
-        <div className="w-5 h-5 bg-orange-500 flex items-center justify-center rounded-sm">
+        <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-orange-500">
           <svg viewBox="0 0 24 24" className="h-3 w-3 text-white">
             <path
               fill="currentColor"
@@ -184,145 +193,163 @@ const getFileIcon = (type: string) => {
             />
           </svg>
         </div>
-      )
+      );
     default:
-      return <FileText className="h-5 w-5 text-zinc-400" />
+      return <FileText className="h-5 w-5 text-zinc-400" />;
   }
-}
+};
 
 export default function DriveContent() {
-  const [currentPath, setCurrentPath] = useState<string[]>(["my-drive"])
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
-  const [selectedItems, setSelectedItems] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState<"name" | "modified">("name")
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const [currentPath, setCurrentPath] = useState<string[]>(["my-drive"]);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<"name" | "modified">("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   // Get current folder name
   const getCurrentFolderName = () => {
-    if (currentPath.length === 1) return "My Drive"
+    if (currentPath.length === 1) return "My Drive";
 
-    const folderPath = "/" + currentPath.join("/")
-    const folder = mockDriveData.find((item) => item.type === "folder" && item.path.toLowerCase() === folderPath)
+    const folderPath = "/" + currentPath.join("/");
+    const folder = mockDriveData.find(
+      (item) =>
+        item.type === "folder" && item.path.toLowerCase() === folderPath,
+    );
 
-    return folder ? folder.name : "My Drive"
-  }
+    return folder ? folder.name : "My Drive";
+  };
 
   // Get current folder ID
   const getCurrentFolderId = () => {
-    if (currentPath.length === 1) return null
+    if (currentPath.length === 1) return null;
 
-    const folderPath = "/" + currentPath.join("/")
-    const folder = mockDriveData.find((item) => item.type === "folder" && item.path.toLowerCase() === folderPath)
+    const folderPath = "/" + currentPath.join("/");
+    const folder = mockDriveData.find(
+      (item) =>
+        item.type === "folder" && item.path.toLowerCase() === folderPath,
+    );
 
-    return folder ? folder.id : null
-  }
+    return folder ? folder.id : null;
+  };
 
   // Get items in current folder
   const getCurrentFolderItems = () => {
-    const currentFolderId = getCurrentFolderId()
+    const currentFolderId = getCurrentFolderId();
 
-    let items = mockDriveData.filter((item) => item.parentId === currentFolderId)
+    let items = mockDriveData.filter(
+      (item) => item.parentId === currentFolderId,
+    );
 
     // Sort items
     items = items.sort((a, b) => {
       // Folders first
-      if (a.type === "folder" && b.type !== "folder") return -1
-      if (a.type !== "folder" && b.type === "folder") return 1
+      if (a.type === "folder" && b.type !== "folder") return -1;
+      if (a.type !== "folder" && b.type === "folder") return 1;
 
       // Then sort by selected field
       if (sortBy === "name") {
-        return sortDirection === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+        return sortDirection === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
       } else {
         return sortDirection === "asc"
-          ? new Date(a.lastModified).getTime() - new Date(b.lastModified).getTime()
-          : new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime()
+          ? new Date(a.lastModified).getTime() -
+              new Date(b.lastModified).getTime()
+          : new Date(b.lastModified).getTime() -
+              new Date(a.lastModified).getTime();
       }
-    })
+    });
 
-    return items
-  }
+    return items;
+  };
 
   // Toggle selection of an item
   const toggleSelection = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id))
+      setSelectedItems(selectedItems.filter((item) => item !== id));
     } else {
-      setSelectedItems([...selectedItems, id])
+      setSelectedItems([...selectedItems, id]);
     }
-  }
+  };
 
   // Navigate to a folder
   const navigateToFolder = (path: string) => {
     // Remove leading slash if present
-    const cleanPath = path.startsWith("/") ? path.substring(1) : path
-    setCurrentPath(cleanPath.split("/"))
-  }
+    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+    setCurrentPath(cleanPath.split("/"));
+  };
 
   // Navigate to parent folder
   const navigateToParent = () => {
     if (currentPath.length > 1) {
-      setCurrentPath(currentPath.slice(0, -1))
+      setCurrentPath(currentPath.slice(0, -1));
     }
-  }
+  };
 
   // Toggle sort direction
   const toggleSort = (field: "name" | "modified") => {
     if (sortBy === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortBy(field)
-      setSortDirection("asc")
+      setSortBy(field);
+      setSortDirection("asc");
     }
-  }
+  };
 
   // Build breadcrumb paths
-  const getBreadcrumbPaths = () => {
-    const paths = []
-    let currentBuildPath = ""
+  // const getBreadcrumbPaths = () => {
+  //   const paths = []
+  //   let currentBuildPath = ""
 
-    for (let i = 0; i < currentPath.length; i++) {
-      currentBuildPath += (i === 0 ? "" : "/") + currentPath[i]
-      paths.push({
-        name: i === 0 ? "My Drive" : currentPath[i].replace(/-/g, " "),
-        path: currentBuildPath,
-      })
-    }
+  //   for (let i = 0; i < currentPath.length; i++) {
+  //     currentBuildPath += (i === 0 ? "" : "/") + currentPath[i]
+  //     paths.push({
+  //       name: i === 0 ? "My Drive" : currentPath[i]?.replace(/-/g, " "),
+  //       path: currentBuildPath,
+  //     })
+  //   }
 
-    return paths
-  }
+  //   return paths
+  // }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full flex-col">
       <div className="p-6">
         {/* Breadcrumb navigation */}
-        <div className="flex items-center mb-6">
+        <div className="mb-6 flex items-center">
           <h1 className="text-2xl font-medium">{getCurrentFolderName()}</h1>
           {currentPath.length > 1 && (
-            <div className="flex items-center ml-4">
+            <div className="ml-4 flex items-center">
               <ChevronRight className="h-5 w-5 text-zinc-400" />
             </div>
           )}
-          <div className="flex items-center gap-2 ml-auto">
-            <div className="flex items-center gap-2 bg-zinc-800 rounded-full p-1">
+          <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-full bg-zinc-800 p-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className={`rounded-full h-8 w-8 ${viewMode === "list" ? "bg-zinc-700" : ""}`}
+                className={`h-8 w-8 rounded-full ${viewMode === "list" ? "bg-zinc-700" : ""}`}
                 onClick={() => setViewMode("list")}
               >
-                <Check className={`h-4 w-4 ${viewMode === "list" ? "opacity-100" : "opacity-0"}`} />
+                <Check
+                  className={`h-4 w-4 ${viewMode === "list" ? "opacity-100" : "opacity-0"}`}
+                />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className={`rounded-full h-8 w-8 ${viewMode === "grid" ? "bg-zinc-700" : ""}`}
+                className={`h-8 w-8 rounded-full ${viewMode === "grid" ? "bg-zinc-700" : ""}`}
                 onClick={() => setViewMode("grid")}
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+            >
               <svg viewBox="0 0 24 24" className="h-5 w-5">
                 <path
                   fill="currentColor"
@@ -334,34 +361,56 @@ export default function DriveContent() {
         </div>
 
         {/* Filter options */}
-        <div className="flex gap-2 mb-4">
-          <Button variant="outline" size="sm" className="text-zinc-300 border-zinc-700 hover:bg-zinc-800">
+        <div className="mb-4 flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+          >
             Type
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="text-zinc-300 border-zinc-700 hover:bg-zinc-800">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+          >
             People
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="text-zinc-300 border-zinc-700 hover:bg-zinc-800">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+          >
             Modified
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="text-zinc-300 border-zinc-700 hover:bg-zinc-800">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+          >
             Source
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
 
         {/* File/folder listing */}
-        <div className="bg-zinc-800 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-12 py-2 px-4 text-xs text-zinc-400 border-b border-zinc-700">
-            <div className="col-span-6 flex items-center cursor-pointer" onClick={() => toggleSort("name")}>
+        <div className="overflow-hidden rounded-lg bg-zinc-800">
+          <div className="grid grid-cols-12 border-b border-zinc-700 px-4 py-2 text-xs text-zinc-400">
+            <div
+              className="col-span-6 flex cursor-pointer items-center"
+              onClick={() => toggleSort("name")}
+            >
               Name
               <ArrowUpDown className="ml-1 h-3 w-3" />
             </div>
             <div className="col-span-2">Owner</div>
-            <div className="col-span-2 flex items-center cursor-pointer" onClick={() => toggleSort("modified")}>
+            <div
+              className="col-span-2 flex cursor-pointer items-center"
+              onClick={() => toggleSort("modified")}
+            >
               Last modified
               <ArrowUpDown className="ml-1 h-3 w-3" />
             </div>
@@ -371,15 +420,21 @@ export default function DriveContent() {
           {/* Breadcrumb navigation for subfolders */}
           {currentPath.length > 1 && (
             <div
-              className="grid grid-cols-12 py-3 px-4 text-sm hover:bg-zinc-750 border-b border-zinc-700 cursor-pointer"
+              className="hover:bg-zinc-750 grid cursor-pointer grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm"
               onClick={navigateToParent}
             >
               <div className="col-span-12 flex items-center gap-3">
                 <svg viewBox="0 0 24 24" className="h-5 w-5 text-zinc-400">
-                  <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                  <path
+                    fill="currentColor"
+                    d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                  />
                 </svg>
                 <span>
-                  Back to {currentPath.length > 2 ? currentPath[currentPath.length - 2].replace(/-/g, " ") : "My Drive"}
+                  Back to{" "}
+                  {currentPath.length > 2
+                    ? currentPath[currentPath.length - 2]?.replace(/-/g, " ")
+                    : "My Drive"}
                 </span>
               </div>
             </div>
@@ -388,7 +443,7 @@ export default function DriveContent() {
           {getCurrentFolderItems().map((item) => (
             <div
               key={item.id}
-              className={`grid grid-cols-12 py-3 px-4 text-sm hover:bg-zinc-750 border-b border-zinc-700 last:border-0 ${
+              className={`hover:bg-zinc-750 grid grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm last:border-0 ${
                 selectedItems.includes(item.id) ? "bg-zinc-750" : ""
               }`}
               onClick={(e) => toggleSelection(item.id, e)}
@@ -397,37 +452,45 @@ export default function DriveContent() {
                 {item.type === "folder" ? (
                   <Folder className="h-5 w-5 text-zinc-400" />
                 ) : (
-                  getFileIcon(item.fileType || "")
+                  getFileIcon(item.fileType ?? "")
                 )}
 
                 {item.type === "folder" ? (
                   <button
-                    className="hover:underline text-left"
+                    className="text-left hover:underline"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      navigateToFolder(item.path)
+                      e.stopPropagation();
+                      navigateToFolder(item.path);
                     }}
                   >
                     {item.name}
                   </button>
                 ) : (
-                  <Link href={item.path} className="hover:underline" onClick={(e) => e.stopPropagation()}>
+                  <Link
+                    href={item.path}
+                    className="hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {item.name}
                   </Link>
                 )}
               </div>
               <div className="col-span-2">
-                <div className="w-6 h-6 rounded-full bg-zinc-600 flex items-center justify-center text-white text-xs">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-600 text-xs text-white">
                   {item.owner === "me" ? "T" : "J"}
                 </div>
               </div>
-              <div className="col-span-2 text-zinc-400">{item.lastModified}</div>
-              <div className="col-span-1 text-zinc-400">{item.fileSize || "—"}</div>
+              <div className="col-span-2 text-zinc-400">
+                {item.lastModified}
+              </div>
+              <div className="col-span-1 text-zinc-400">
+                {item.fileSize ?? "—"}
+              </div>
               <div className="col-span-1 flex justify-end">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-zinc-400 h-8 w-8"
+                  className="h-8 w-8 text-zinc-400"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreVertical className="h-4 w-4" />
@@ -438,5 +501,5 @@ export default function DriveContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
