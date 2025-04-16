@@ -13,155 +13,170 @@ import {
   Check,
   LayoutGrid,
   ArrowUpDown,
+  File,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
 // Mock data structure for folders and files
-interface DriveItem {
+export interface DriveItem {
   id: string;
   name: string;
-  type: "folder" | "file";
-  fileType?: string;
-  path: string;
-  owner: string;
+  owner: { name: string; email: string; id: string } | string;
   lastModified: string;
-  fileSize?: string;
-  parentId: string | null;
+  parent: string | null;
+}
+export interface File extends DriveItem {
+  type: "file";
+  url: string;
+  fileType: string;
+  size: string;
 }
 
-// Mock data for the drive with completely fictional data
-const mockDriveData: DriveItem[] = [
-  // Root folders
+export interface Folder extends DriveItem {
+  type: "folder";
+}
+
+export const mockFolders: Folder[] = [
+  {
+    id: "root",
+    name: "My Drive",
+    type: "folder",
+    owner: "me",
+    lastModified: "1 Jan 2023",
+    parent: null,
+  },
   {
     id: "folder1",
     name: "Project Documents",
     type: "folder",
-    path: "/my-drive/project-documents",
     owner: "me",
     lastModified: "3 May 2023",
-    parentId: null,
+    parent: "root",
   },
   {
     id: "folder2",
     name: "Marketing Materials",
     type: "folder",
-    path: "/my-drive/marketing-materials",
     owner: "me",
     lastModified: "17 Dec 2024",
-    parentId: null,
+    parent: "root",
   },
   {
     id: "folder3",
     name: "Client Presentations",
     type: "folder",
-    path: "/my-drive/client-presentations",
     owner: "me",
     lastModified: "31 Aug 2024",
-    parentId: null,
+    parent: "root",
   },
   {
     id: "folder4",
-    name: "Financial Reports",
+    name: "Technical Reports",
     type: "folder",
-    path: "/my-drive/financial-reports",
     owner: "me",
     lastModified: "9 Apr 2024",
-    parentId: null,
+    parent: "folder1",
   },
   {
     id: "folder5",
     name: "Course Materials",
     type: "folder",
-    path: "/my-drive/course-materials",
     owner: "me",
     lastModified: "24 Feb 2023",
-    parentId: null,
+    parent: "folder1",
   },
-
-  // Subfolders inside "Course Materials"
   {
     id: "folder6",
     name: "Introduction Courses",
     type: "folder",
-    path: "/my-drive/course-materials/introduction-courses",
     owner: "me",
     lastModified: "24 Feb 2023",
-    parentId: "folder5",
+    parent: "folder5",
   },
   {
     id: "folder7",
     name: "Advanced Courses",
     type: "folder",
-    path: "/my-drive/course-materials/advanced-courses",
     owner: "me",
     lastModified: "24 Feb 2023",
-    parentId: "folder5",
+    parent: "folder5",
   },
+];
 
-  // Files in root
+export const mockFiles: File[] = [
   {
     id: "file1",
-    name: "company_logo.jpg",
+    name: "company_logo",
     type: "file",
-    fileType: "image",
-    path: "/my-drive/company_logo.jpg",
+    url: "/path/to/company_logo.jpg",
+    size: "1.2 MB",
     owner: "me",
     lastModified: "15 Apr 2024",
-    fileSize: "1.2 MB",
-    parentId: null,
+    parent: "folder2",
+    fileType: "jpg",
   },
   {
     id: "file2",
-    name: "product_banner.ai",
+    name: "product_banner",
     type: "file",
-    fileType: "ai",
-    path: "/my-drive/product_banner.ai",
+    url: "/path/to/product_banner.ai",
+    size: "29.2 MB",
     owner: "me",
     lastModified: "26 Jun 2023",
-    fileSize: "29.2 MB",
-    parentId: null,
+    parent: "folder2",
+    fileType: "ai",
   },
   {
     id: "file3",
-    name: "product_banner.jpg",
+    name: "product_banner",
     type: "file",
-    fileType: "image",
-    path: "/my-drive/product_banner.jpg",
+    url: "/path/to/product_banner.jpg",
+    size: "640 KB",
     owner: "me",
     lastModified: "26 Jun 2023",
-    fileSize: "640 KB",
-    parentId: null,
+    parent: "folder2",
+    fileType: "jpg",
   },
   {
     id: "file4",
-    name: "quarterly_report.pdf",
+    name: "quarterly_report",
     type: "file",
-    fileType: "pdf",
-    path: "/my-drive/quarterly_report.pdf",
+    url: "/path/to/quarterly_report.pdf",
+    size: "888 KB",
     owner: "me",
     lastModified: "26 Jun 2023",
-    fileSize: "888 KB",
-    parentId: null,
+    parent: "folder4",
+    fileType: "pdf",
   },
-
-  // Files in "Course Materials"
   {
     id: "file5",
-    name: "syllabus.jpg",
+    name: "syllabus",
     type: "file",
-    fileType: "image",
-    path: "/my-drive/course-materials/syllabus.jpg",
+    url: "/path/to/syllabus.jpg",
+    size: "189 KB",
     owner: "me",
     lastModified: "24 Feb 2023",
-    fileSize: "189 KB",
-    parentId: "folder5",
+    parent: "folder6",
+    fileType: "jpg",
+  },
+  {
+    id: "file6",
+    name: "family_vacation_photo",
+    type: "file",
+    url: "/path/to/family_vacation_photo.jpg",
+    size: "2.5 MB",
+    owner: "me",
+    lastModified: "10 Jan 2023",
+    parent: "root",
+    fileType: "jpg",
   },
 ];
+// Mock data for the drive with completely fictional data
 
 // Function to get icon based on file type
 const getFileIcon = (type: string) => {
   switch (type) {
-    case "image":
+    case "jpg":
       return (
         <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-red-500">
           <svg viewBox="0 0 24 24" className="h-3 w-3 text-white">
@@ -183,323 +198,313 @@ const getFileIcon = (type: string) => {
           </svg>
         </div>
       );
-    case "ai":
-      return (
-        <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-orange-500">
-          <svg viewBox="0 0 24 24" className="h-3 w-3 text-white">
-            <path
-              fill="currentColor"
-              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1z"
-            />
-          </svg>
-        </div>
-      );
     default:
-      return <FileText className="h-5 w-5 text-zinc-400" />;
+      return <File className="h-5 w-5 text-zinc-400" />;
   }
 };
 
 export default function DriveContent() {
-  const [currentPath, setCurrentPath] = useState<string[]>(["my-drive"]);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<"name" | "modified">("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  //   const [currentPath, setCurrentPath] = useState<string[]>(["root"]);
+  //   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  //   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  //   const [sortBy, setSortBy] = useState<"name" | "modified">("name");
+  //   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  // Get current folder name
-  const getCurrentFolderName = () => {
-    if (currentPath.length === 1) return "My Drive";
+  //   // Get current folder name
+  //   const getCurrentFolderName = () => {
+  //     if (currentPath.length === 1) return "My Drive";
 
-    const folderPath = "/" + currentPath.join("/");
-    const folder = mockDriveData.find(
-      (item) =>
-        item.type === "folder" && item.path.toLowerCase() === folderPath,
-    );
+  //     const folderPath = "/" + currentPath.join("/");
+  //     const folder = mockDriveData.find(
+  //       (item) =>
+  //         item.type === "folder" && item.path.toLowerCase() === folderPath,
+  //     );
 
-    return folder ? folder.name : "My Drive";
-  };
+  //     return folder ? folder.name : "My Drive";
+  //   };
 
-  // Get current folder ID
-  const getCurrentFolderId = () => {
-    if (currentPath.length === 1) return null;
+  //   // Get current folder ID
+  //   const getCurrentFolderId = () => {
+  //     if (currentPath.length === 1) return null;
 
-    const folderPath = "/" + currentPath.join("/");
-    const folder = mockDriveData.find(
-      (item) =>
-        item.type === "folder" && item.path.toLowerCase() === folderPath,
-    );
+  //     const folderPath = "/" + currentPath.join("/");
+  //     const folder = mockDriveData.find(
+  //       (item) =>
+  //         item.type === "folder" && item.path.toLowerCase() === folderPath,
+  //     );
 
-    return folder ? folder.id : null;
-  };
+  //     return folder ? folder.id : null;
+  //   };
 
-  // Get items in current folder
-  const getCurrentFolderItems = () => {
-    const currentFolderId = getCurrentFolderId();
+  //   // Get items in current folder
+  //   const getCurrentFolderItems = () => {
+  //     const currentFolderId = getCurrentFolderId();
 
-    let items = mockDriveData.filter(
-      (item) => item.parentId === currentFolderId,
-    );
+  //     let items = mockDriveData.filter(
+  //       (item) => item.parentId === currentFolderId,
+  //     );
 
-    // Sort items
-    items = items.sort((a, b) => {
-      // Folders first
-      if (a.type === "folder" && b.type !== "folder") return -1;
-      if (a.type !== "folder" && b.type === "folder") return 1;
+  //     // Sort items
+  //     items = items.sort((a, b) => {
+  //       // Folders first
+  //       if (a.type === "folder" && b.type !== "folder") return -1;
+  //       if (a.type !== "folder" && b.type === "folder") return 1;
 
-      // Then sort by selected field
-      if (sortBy === "name") {
-        return sortDirection === "asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else {
-        return sortDirection === "asc"
-          ? new Date(a.lastModified).getTime() -
-              new Date(b.lastModified).getTime()
-          : new Date(b.lastModified).getTime() -
-              new Date(a.lastModified).getTime();
-      }
-    });
+  //       // Then sort by selected field
+  //       if (sortBy === "name") {
+  //         return sortDirection === "asc"
+  //           ? a.name.localeCompare(b.name)
+  //           : b.name.localeCompare(a.name);
+  //       } else {
+  //         return sortDirection === "asc"
+  //           ? new Date(a.lastModified).getTime() -
+  //               new Date(b.lastModified).getTime()
+  //           : new Date(b.lastModified).getTime() -
+  //               new Date(a.lastModified).getTime();
+  //       }
+  //     });
 
-    return items;
-  };
+  //     return items;
+  //   };
 
-  // Toggle selection of an item
-  const toggleSelection = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id));
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
-  };
+  //   // Toggle selection of an item
+  //   const toggleSelection = (id: string, e: React.MouseEvent) => {
+  //     e.stopPropagation();
+  //     if (selectedItems.includes(id)) {
+  //       setSelectedItems(selectedItems.filter((item) => item !== id));
+  //     } else {
+  //       setSelectedItems([...selectedItems, id]);
+  //     }
+  //   };
 
-  // Navigate to a folder
-  const navigateToFolder = (path: string) => {
-    // Remove leading slash if present
-    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
-    setCurrentPath(cleanPath.split("/"));
-  };
+  //   // Navigate to a folder
+  //   const navigateToFolder = (path: string) => {
+  //     // Remove leading slash if present
+  //     const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+  //     setCurrentPath(cleanPath.split("/"));
+  //   };
 
-  // Navigate to parent folder
-  const navigateToParent = () => {
-    if (currentPath.length > 1) {
-      setCurrentPath(currentPath.slice(0, -1));
-    }
-  };
+  //   // Navigate to parent folder
+  //   const navigateToParent = () => {
+  //     if (currentPath.length > 1) {
+  //       setCurrentPath(currentPath.slice(0, -1));
+  //     }
+  //   };
 
-  // Toggle sort direction
-  const toggleSort = (field: "name" | "modified") => {
-    if (sortBy === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setSortDirection("asc");
-    }
-  };
+  //   // Toggle sort direction
+  //   const toggleSort = (field: "name" | "modified") => {
+  //     if (sortBy === field) {
+  //       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  //     } else {
+  //       setSortBy(field);
+  //       setSortDirection("asc");
+  //     }
+  //   };
 
-  // Build breadcrumb paths
-  // const getBreadcrumbPaths = () => {
-  //   const paths = []
-  //   let currentBuildPath = ""
+  //   // Build breadcrumb paths
+  //   // const getBreadcrumbPaths = () => {
+  //   //   const paths = []
+  //   //   let currentBuildPath = ""
 
-  //   for (let i = 0; i < currentPath.length; i++) {
-  //     currentBuildPath += (i === 0 ? "" : "/") + currentPath[i]
-  //     paths.push({
-  //       name: i === 0 ? "My Drive" : currentPath[i]?.replace(/-/g, " "),
-  //       path: currentBuildPath,
-  //     })
-  //   }
+  //   //   for (let i = 0; i < currentPath.length; i++) {
+  //   //     currentBuildPath += (i === 0 ? "" : "/") + currentPath[i]
+  //   //     paths.push({
+  //   //       name: i === 0 ? "My Drive" : currentPath[i]?.replace(/-/g, " "),
+  //   //       path: currentBuildPath,
+  //   //     })
+  //   //   }
 
-  //   return paths
-  // }
+  //   //   return paths
+  //   // }
 
-  return (
-    <div className="flex h-full flex-col">
-      <div className="p-6">
-        {/* Breadcrumb navigation */}
-        <div className="mb-6 flex items-center">
-          <h1 className="text-2xl font-medium">{getCurrentFolderName()}</h1>
-          {currentPath.length > 1 && (
-            <div className="ml-4 flex items-center">
-              <ChevronRight className="h-5 w-5 text-zinc-400" />
-            </div>
-          )}
-          <div className="ml-auto flex items-center gap-2">
-            <div className="flex items-center gap-2 rounded-full bg-zinc-800 p-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-8 w-8 rounded-full ${viewMode === "list" ? "bg-zinc-700" : ""}`}
-                onClick={() => setViewMode("list")}
-              >
-                <Check
-                  className={`h-4 w-4 ${viewMode === "list" ? "opacity-100" : "opacity-0"}`}
-                />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`h-8 w-8 rounded-full ${viewMode === "grid" ? "bg-zinc-700" : ""}`}
-                onClick={() => setViewMode("grid")}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full"
-            >
-              <svg viewBox="0 0 24 24" className="h-5 w-5">
-                <path
-                  fill="currentColor"
-                  d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
-                />
-              </svg>
-            </Button>
-          </div>
-        </div>
+  //   return (
+  //     <div className="flex h-full flex-col">
+  //       <div className="p-6">
+  //         {/* Breadcrumb navigation */}
+  //         <div className="mb-6 flex items-center">
+  //           <h1 className="text-2xl font-medium">{getCurrentFolderName()}</h1>
+  //           {currentPath.length > 1 && (
+  //             <div className="ml-4 flex items-center">
+  //               <ChevronRight className="h-5 w-5 text-zinc-400" />
+  //             </div>
+  //           )}
+  //           <div className="ml-auto flex items-center gap-2">
+  //             <div className="flex items-center gap-2 rounded-full bg-zinc-800 p-1">
+  //               <Button
+  //                 variant="ghost"
+  //                 size="icon"
+  //                 className={`h-8 w-8 rounded-full ${viewMode === "list" ? "bg-zinc-700" : ""}`}
+  //                 onClick={() => setViewMode("list")}
+  //               >
+  //                 <Check
+  //                   className={`h-4 w-4 ${viewMode === "list" ? "opacity-100" : "opacity-0"}`}
+  //                 />
+  //               </Button>
+  //               <Button
+  //                 variant="ghost"
+  //                 size="icon"
+  //                 className={`h-8 w-8 rounded-full ${viewMode === "grid" ? "bg-zinc-700" : ""}`}
+  //                 onClick={() => setViewMode("grid")}
+  //               >
+  //                 <LayoutGrid className="h-4 w-4" />
+  //               </Button>
+  //             </div>
+  //             <Button
+  //               variant="ghost"
+  //               size="icon"
+  //               className="h-8 w-8 rounded-full"
+  //             >
+  //               <svg viewBox="0 0 24 24" className="h-5 w-5">
+  //                 <path
+  //                   fill="currentColor"
+  //                   d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
+  //                 />
+  //               </svg>
+  //             </Button>
+  //           </div>
+  //         </div>
 
-        {/* Filter options */}
-        <div className="mb-4 flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-          >
-            Type
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-          >
-            People
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-          >
-            Modified
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-          >
-            Source
-            <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+  //         {/* Filter options */}
+  //         <div className="mb-4 flex gap-2">
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+  //           >
+  //             Type
+  //             <ChevronDown className="ml-2 h-4 w-4" />
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+  //           >
+  //             People
+  //             <ChevronDown className="ml-2 h-4 w-4" />
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+  //           >
+  //             Modified
+  //             <ChevronDown className="ml-2 h-4 w-4" />
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+  //           >
+  //             Source
+  //             <ChevronDown className="ml-2 h-4 w-4" />
+  //           </Button>
+  //         </div>
 
-        {/* File/folder listing */}
-        <div className="overflow-hidden rounded-lg bg-zinc-800">
-          <div className="grid grid-cols-12 border-b border-zinc-700 px-4 py-2 text-xs text-zinc-400">
-            <div
-              className="col-span-6 flex cursor-pointer items-center"
-              onClick={() => toggleSort("name")}
-            >
-              Name
-              <ArrowUpDown className="ml-1 h-3 w-3" />
-            </div>
-            <div className="col-span-2">Owner</div>
-            <div
-              className="col-span-2 flex cursor-pointer items-center"
-              onClick={() => toggleSort("modified")}
-            >
-              Last modified
-              <ArrowUpDown className="ml-1 h-3 w-3" />
-            </div>
-            <div className="col-span-2">File size</div>
-          </div>
+  // {/* File/folder listing */}
+  // <div className="overflow-hidden rounded-lg bg-zinc-800">
+  //   <div className="grid grid-cols-12 border-b border-zinc-700 px-4 py-2 text-xs text-zinc-400">
+  //     <div
+  //       className="col-span-6 flex cursor-pointer items-center"
+  //       onClick={() => toggleSort("name")}
+  //     >
+  //       Name
+  //       <ArrowUpDown className="ml-1 h-3 w-3" />
+  //     </div>
+  //     <div className="col-span-2">Owner</div>
+  //     <div
+  //       className="col-span-2 flex cursor-pointer items-center"
+  //       onClick={() => toggleSort("modified")}
+  //     >
+  //       Last modified
+  //       <ArrowUpDown className="ml-1 h-3 w-3" />
+  //     </div>
+  //     <div className="col-span-2">File size</div>
+  //   </div>
 
-          {/* Breadcrumb navigation for subfolders */}
-          {currentPath.length > 1 && (
-            <div
-              className="hover:bg-zinc-750 grid cursor-pointer grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm"
-              onClick={navigateToParent}
-            >
-              <div className="col-span-12 flex items-center gap-3">
-                <svg viewBox="0 0 24 24" className="h-5 w-5 text-zinc-400">
-                  <path
-                    fill="currentColor"
-                    d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
-                  />
-                </svg>
-                <span>
-                  Back to{" "}
-                  {currentPath.length > 2
-                    ? currentPath[currentPath.length - 2]?.replace(/-/g, " ")
-                    : "My Drive"}
-                </span>
-              </div>
-            </div>
-          )}
+  //   {/* Breadcrumb navigation for subfolders */}
+  //   {currentPath.length > 1 && (
+  //     <div
+  //       className="hover:bg-zinc-750 grid cursor-pointer grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm"
+  //       onClick={navigateToParent}
+  //     >
+  //       <div className="col-span-12 flex items-center gap-3">
+  //         <svg viewBox="0 0 24 24" className="h-5 w-5 text-zinc-400">
+  //           <path
+  //             fill="currentColor"
+  //             d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+  //           />
+  //         </svg>
+  //         <span>
+  //           Back to{" "}
+  //           {currentPath.length > 2
+  //             ? currentPath[currentPath.length - 2]?.replace(/-/g, " ")
+  //             : "My Drive"}
+  //         </span>
+  //       </div>
+  //     </div>
+  //   )}
 
-          {getCurrentFolderItems().map((item) => (
-            <div
-              key={item.id}
-              className={`hover:bg-zinc-750 grid grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm last:border-0 ${
-                selectedItems.includes(item.id) ? "bg-zinc-750" : ""
-              }`}
-              onClick={(e) => toggleSelection(item.id, e)}
-            >
-              <div className="col-span-6 flex items-center gap-3">
-                {item.type === "folder" ? (
-                  <Folder className="h-5 w-5 text-zinc-400" />
-                ) : (
-                  getFileIcon(item.fileType ?? "")
-                )}
+  //           {getCurrentFolderItems().map((item) => (
+  //             <div
+  //               key={item.id}
+  //               className={`hover:bg-zinc-750 grid grid-cols-12 border-b border-zinc-700 px-4 py-3 text-sm last:border-0 ${
+  //                 selectedItems.includes(item.id) ? "bg-zinc-750" : ""
+  //               }`}
+  //               onClick={(e) => toggleSelection(item.id, e)}
+  //             >
+  //               <div className="col-span-6 flex items-center gap-3">
+  //                 {item.type === "folder" ? (
+  //                   <Folder className="h-5 w-5 text-zinc-400" />
+  //                 ) : (
+  //                   getFileIcon(item.fileType ?? "")
+  //                 )}
 
-                {item.type === "folder" ? (
-                  <button
-                    className="text-left hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateToFolder(item.path);
-                    }}
-                  >
-                    {item.name}
-                  </button>
-                ) : (
-                  <Link
-                    href={item.path}
-                    className="hover:underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
-              <div className="col-span-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-600 text-xs text-white">
-                  {item.owner === "me" ? "T" : "J"}
-                </div>
-              </div>
-              <div className="col-span-2 text-zinc-400">
-                {item.lastModified}
-              </div>
-              <div className="col-span-1 text-zinc-400">
-                {item.fileSize ?? "—"}
-              </div>
-              <div className="col-span-1 flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-zinc-400"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  //                 {item.type === "folder" ? (
+  //                   <button
+  //                     className="text-left hover:underline"
+  //                     onClick={(e) => {
+  //                       e.stopPropagation();
+  //                       navigateToFolder(item.path);
+  //                     }}
+  //                   >
+  //                     {item.name}
+  //                   </button>
+  //                 ) : (
+  //                   <Link
+  //                     href={item.path}
+  //                     className="hover:underline"
+  //                     onClick={(e) => e.stopPropagation()}
+  //                   >
+  //                     {item.name}
+  //                   </Link>
+  //                 )}
+  //               </div>
+  //               <div className="col-span-2">
+  //                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-600 text-xs text-white">
+  //                   {item.owner === "me" ? "T" : "J"}
+  //                 </div>
+  //               </div>
+  //               <div className="col-span-2 text-zinc-400">
+  //                 {item.lastModified}
+  //               </div>
+  //               <div className="col-span-1 text-zinc-400">
+  //                 {item.fileSize ?? "—"}
+  //               </div>
+  //               <div className="col-span-1 flex justify-end">
+  //                 <Button
+  //                   variant="ghost"
+  //                   size="icon"
+  //                   className="h-8 w-8 text-zinc-400"
+  //                   onClick={(e) => e.stopPropagation()}
+  //                 >
+  //                   <MoreVertical className="h-4 w-4" />
+  //                 </Button>
+  //               </div>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  return <div>Drive Contents</div>;
 }

@@ -1,10 +1,7 @@
-import DriveLayout from "~/components/drive-layout"
-import DriveContent from "~/components/drive-content"
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <DriveLayout>
-      <DriveContent />
-    </DriveLayout>
-  )
+  redirect("/my-drive");
+
+  return null;
 }
