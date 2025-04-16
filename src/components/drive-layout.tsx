@@ -50,39 +50,6 @@ export default function DriveLayout({
 
   return (
     <div className="flex h-screen flex-col bg-zinc-900 text-zinc-100">
-      {/* Top navigation bar */}
-      <header className="flex h-16 items-center border-b border-zinc-800 px-4">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="text-zinc-400">
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-zinc-400">
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-zinc-400">
-            <RefreshCw className="h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Breadcrumb */}
-        <div className="ml-4 flex items-center text-sm text-zinc-400">
-          <span>drive.google.com/drive/u/0/</span>
-          <span className="font-medium text-zinc-300">{pathname}</span>
-        </div>
-
-        <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-zinc-400">
-            <Grid className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-zinc-400">
-            <MoreVertical className="h-5 w-5" />
-          </Button>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-600 text-white">
-            T
-          </div>
-        </div>
-      </header>
-
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
@@ -101,7 +68,6 @@ export default function DriveLayout({
             </svg>
             <span className="text-xl font-medium">Drive</span>
           </div>
-
           <div className="px-2 py-4">
             <Button className="w-full justify-start gap-2 bg-white text-black hover:bg-zinc-200">
               <span className="font-medium">New</span>
@@ -212,7 +178,7 @@ export default function DriveLayout({
 
         {/* Main content area */}
         <main className="flex-1 overflow-auto">
-          <div className="flex items-center gap-2 border-b border-zinc-800 p-2">
+          <header className="flex h-16 items-center border-b border-zinc-800 px-4">
             <div className="relative max-w-md flex-1">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-zinc-400" />
               <Input
@@ -223,14 +189,24 @@ export default function DriveLayout({
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="ghost" size="icon" className="text-zinc-400">
-              <Settings className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="text-zinc-400">
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-          </div>
-
+            <div className="ml-auto flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="text-zinc-400">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-zinc-400">
+                <HelpCircle className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-zinc-400">
+                <Settings className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-zinc-400">
+                <Grid className="h-5 w-5" />
+              </Button>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-600 text-white">
+                T
+              </div>
+            </div>
+          </header>
           {children}
         </main>
       </div>
