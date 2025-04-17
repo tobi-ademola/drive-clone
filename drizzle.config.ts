@@ -26,4 +26,5 @@ export default defineConfig({
     database: env.SINGLESTORE_DB_NAME,
     ssl: {},
   },
+  tablesFilter: ["drive-clone_*"],
 });
