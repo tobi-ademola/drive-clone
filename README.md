@@ -15,3 +15,9 @@ Just finished up connecting database, next steps:
 - [ ] Manually inser examples
 - [ ] Render them in the UI
 - [ ] Push and make sure it all works
+
+## Note from 17-04-2025
+
+Attempt to make an exact clone with more features
+
+- [ ] Finalise on the search button and the entire header in drive-layout.tsx

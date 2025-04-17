@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import Image from "next/image";
 
 export default function DriveLayout({
   children,
@@ -55,7 +56,7 @@ export default function DriveLayout({
         {/* Sidebar */}
         <aside className="flex w-64 flex-col border-r border-zinc-800">
           <div className="flex items-center gap-2 p-4">
-            <svg viewBox="0 0 87 87" className="h-10 w-10">
+            {/* <svg viewBox="0 0 87 87" className="h-10 w-10">
               <path
                 d="M49.5,21.9H23.3l26.3,44.4h26.3L49.5,21.9z"
                 fill="#00ac47"
@@ -65,7 +66,10 @@ export default function DriveLayout({
                 d="M49.5,21.9L23.3,66.3h26.3L75.8,21.9H49.5z"
                 fill="#ffba00"
               />
-            </svg>
+            </svg> */}
+            <div className="relative aspect-square w-10 object-cover">
+              <Image fill src={"/icon.png"} alt={"Google Drive Logo"} />
+            </div>
             <span className="text-xl font-medium">Drive</span>
           </div>
           <div className="px-2 py-4">
@@ -177,14 +181,19 @@ export default function DriveLayout({
         </aside>
 
         {/* Main content area */}
-        <main className="flex-1 overflow-auto">
-          <header className="flex h-16 items-center border-b border-zinc-800 px-4">
-            <div className="relative max-w-md flex-1">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-zinc-400" />
+        <main className="flex-1 overflow-auto px-4">
+          <header className="flex h-18 items-center border-zinc-800">
+            <div className="relative z-10 max-w-2/3 flex-1">
+              <Button
+                size={"basic"}
+                className="absolute top-1/2 left-3 -translate-y-1/2 transform rounded-full bg-inherit p-3 hover:bg-zinc-600"
+              >
+                <Search className="text-zinc-100" />
+              </Button>
               <Input
                 type="text"
                 placeholder="Search in Drive"
-                className="border-none bg-zinc-800 pl-9 text-zinc-300"
+                className="rounded-4xl border-none bg-zinc-800 py-6 pl-16 text-zinc-200 placeholder:text-zinc-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

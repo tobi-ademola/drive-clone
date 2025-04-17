@@ -1,7 +1,12 @@
 import type React from "react";
 import "~/styles/globals.css";
-// import { ThemeProvider } from "~/components/theme-provider"
 import DriveLayout from "~/components/drive-layout";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  weight: ["200", "400", "600", "800"],
+  subsets: ["latin"],
+});
 
 export const metadata = {
   title: "Google Drive Clone",
@@ -14,11 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={poppins.className}>
       <body className="min-h-screen bg-zinc-900 text-zinc-100">
-        {/* <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}> */}
         <DriveLayout>{children}</DriveLayout>
-        {/* </ThemeProvider> */}
       </body>
     </html>
   );
