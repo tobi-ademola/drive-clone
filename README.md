@@ -3,15 +3,13 @@
 ## TODO
 
 - [x] Set up database and data model
-- [ ] Move folder open state to URL
+- [x] Move folder open state to URL
 - [ ] Add auth
 - [ ] Add file uploading
+- [ ] Add analytics
 
-## Notes from 17-04-2025
+## Notes from 21-04-2025
 
-Just finished up connecting database, next steps:
-
-- [ ] Update scheam to show files and folders
-- [ ] Manuallly insert examples
-- [ ] Render the in the UI
-- [ ] PUhs amd make sure it all works
+- [ ] Change Folders to link components, remove all clident state
+- [ ] Clean up the database and data fetching pattersn
+- [ ] Real homepage
