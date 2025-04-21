@@ -10,6 +10,6 @@
 
 ## Notes from 21-04-2025
 
-- [ ] Change Folders to link components, remove all clident state
-- [ ] Clean up the database and data fetching pattersn
+- [x] Change Folders to link components, remove all clident state
+- [x] Clean up the database and data fetching pattern
 - [ ] Real homepage
