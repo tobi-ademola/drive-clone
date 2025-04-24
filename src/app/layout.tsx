@@ -1,6 +1,6 @@
 import type React from "react";
 import "~/styles/globals.css";
-// import { ThemeProvider } from "~/components/theme-provider"
+import "@uploadthing/react/styles.css";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
