@@ -5,6 +5,7 @@ import { FileRow, FolderRow } from "./item-row";
 import { ChevronRight, Upload } from "lucide-react";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -35,13 +36,15 @@ export default function DriveContents(props: {
               </div>
             ))}
           </div>
-          <Button
-            onClick={handleUpload}
-            className="bg-blue-600 text-white hover:bg-blue-700"
-          >
-            <Upload className="mr-2" size={20} />
-            Upload
-          </Button>
+          <div>
+            <SignedOut>
+              <SignInButton />
+              {/* <SignUpButton /> */}
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </div>
         <div className="rounded-lg bg-gray-800 shadow-xl">
           <div className="border-b border-gray-700 px-6 py-4">
