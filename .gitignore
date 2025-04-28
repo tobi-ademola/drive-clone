@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+#Sandboxes
+src/app/sandbox/
+
 # database
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
