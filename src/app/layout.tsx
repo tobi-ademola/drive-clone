@@ -2,6 +2,7 @@ import type React from "react";
 import "~/styles/globals.css";
 import "@uploadthing/react/styles.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { PostHogProvider } from "./_providers/posthog-provider";
 
 export const metadata = {
   title: "Google Drive Clone",
@@ -18,7 +19,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className="min-h-screen bg-zinc-900 text-zinc-100">
           {/* <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}> */}
-          {children}
+          <PostHogProvider>{children}</PostHogProvider>
           {/* </ThemeProvider> */}
         </body>
       </html>
