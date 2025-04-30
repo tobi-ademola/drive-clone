@@ -9,10 +9,12 @@
 - [x] Add analytics
 - [x] Make sure sort order is consistent
 - [x] Add delete
-- [ ] Real homepage + onboarding
+- [x] Real homepage + onboarding
 
-## Fun follow up
+## UI updates
 
-### Folder deletions
-
-Make sure you fetch all of the folders (and their children) and files that have it as a parent
+- [x] Add the SignedInButton to the toolbar
+- [ ] Make the navbar responsive
+- [ ] Add the filter button and search button icon
+- [ ] Customise the default clear search button icon
+- [ ] Create the search dropdown

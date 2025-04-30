@@ -4,7 +4,6 @@ import { FileRow, FolderRow } from "./item-row";
 import { ChevronRight } from "lucide-react";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { UploadButton } from "~/components/uploadthing";
 import { useRouter } from "next/navigation";
 
@@ -36,15 +35,6 @@ export default function DriveContents(props: {
                 </Link>
               </div>
             ))}
-          </div>
-          <div>
-            <SignedOut>
-              <SignInButton />
-              {/* <SignUpButton /> */}
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
           </div>
         </div>
         <div className="rounded-lg bg-gray-800 shadow-xl">
