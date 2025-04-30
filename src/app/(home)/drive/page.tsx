@@ -1,16 +1,19 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { MUTATIONS, QUERIES } from "~/server/db/queries";
 
-export default function HomePage() {
-  return (
-    <>
-      <h1 className="mb-4 bg-gradient-to-r from-neutral-200 to-neutral-400 bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
-        Tobi Drive
-      </h1>
-      <p className="mx-auto mb-8 max-w-md text-xl text-neutral-400 md:text-2xl">
-        Secure, fast, and easy file storage for the modern web
-      </p>
+export default async function DrivePage() {
+  const session = await auth();
+
+  if (!session.userId) {
+    return redirect("/sign-in");
+  }
+
+  const rootFolder = await QUERIES.getRootFolderForUser(session.userId);
+
+  if (!rootFolder) {
+    return (
       <form
         action={async () => {
           "use server";
@@ -21,17 +24,20 @@ export default function HomePage() {
             return redirect("/sign-in");
           }
 
-          return redirect("/drive");
+          const rootFolderId = await MUTATIONS.onboardUser(session.userId);
+
+          redirect(`/f/${rootFolderId}`);
         }}
       >
         <Button
           size="lg"
-          type="submit"
           className="cursor-pointer border border-neutral-700 bg-neutral-800 text-white transition-colors hover:bg-neutral-700"
         >
-          Get Started
+          Create new Drive
         </Button>
       </form>
-    </>
-  );
+    );
+  }
+
+  return redirect(`/f/${rootFolder.id}`);
 }
