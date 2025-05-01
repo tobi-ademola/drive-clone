@@ -4,6 +4,7 @@ import "@uploadthing/react/styles.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./_providers/posthog-provider";
 import { Poppins } from "next/font/google";
+import { ThemeProvider } from "~/components/theme-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,7 +28,16 @@ export default function RootLayout({
         <body
           className={`min-h-screen bg-zinc-900 text-zinc-100 ${poppins.className} font-sans`}
         >
-          <PostHogProvider>{children}</PostHogProvider>
+          <PostHogProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>

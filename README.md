@@ -14,7 +14,8 @@
 ## UI updates
 
 - [x] Add the SignedInButton to the toolbar
-- [ ] Make the navbar responsive
-- [ ] Add the filter button and search button icon
-- [ ] Customise the default clear search button icon
+- [x] Make the toolbar responsive
+- [x] Integrated dark mode
+- [x] Test the toolbar in dark mode
+- [x] Add the filter button and search button icon
 - [ ] Create the search dropdown
