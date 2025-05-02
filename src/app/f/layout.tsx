@@ -1,10 +1,31 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { SearchIcon, SettingsIcon, SlidersHorizontal } from "lucide-react";
+import {
+  FileUpIcon,
+  FolderPlusIcon,
+  FolderUpIcon,
+  PlusIcon,
+  SearchIcon,
+  SettingsIcon,
+  SlidersHorizontal,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "~/components/ui/resizable";
 
 export default function DriveLayout({
   children,
@@ -12,8 +33,9 @@ export default function DriveLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-svh w-screen overflow-hidden bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
-      <header className="grid grid-cols-12 grid-rows-2 gap-y-3 px-6 py-2.5 md:grid-rows-1 md:gap-y-0">
+    <div className="h-screen w-screen overflow-hidden bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+      {/* Toolbar Component */}
+      <header className="grid grid-cols-12 grid-rows-2 gap-y-3 px-3 py-2.5 md:grid-rows-1 md:gap-y-0 md:px-6">
         <div
           style={{
             gridRow: "1 / span 1",
@@ -84,7 +106,85 @@ export default function DriveLayout({
         </div>
       </header>
 
-      <div className="grid h-svh w-screen grid-cols-12 overflow-hidden">
+      {/* Toolbar Component End */}
+
+      <ResizablePanelGroup direction="horizontal" className="px-3 py-6 md:px-6">
+        <ResizablePanel
+          defaultSize={(2 / 12) * 100}
+          minSize={(2 / 12) * 100}
+          maxSize={(3.5 / 12) * 100}
+        >
+          <aside>
+            <div className="flex w-full items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
+                    <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                    New
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Button
+                        variant={"ghost"}
+                        className="w-full cursor-pointer px-1 py-0.5"
+                      >
+                        <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                        New folder
+                        <DropdownMenuShortcut>
+                          Alt+C then F
+                        </DropdownMenuShortcut>
+                      </Button>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Button
+                        variant={"ghost"}
+                        className="w-full cursor-pointer px-1 py-0.5"
+                      >
+                        <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                        File upload
+                        <DropdownMenuShortcut>
+                          Alt+C then U
+                        </DropdownMenuShortcut>
+                      </Button>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Button
+                        variant={"ghost"}
+                        className="w-full cursor-pointer px-1 py-0.5"
+                      >
+                        <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                        Folder upload
+                        <DropdownMenuShortcut>
+                          Alt+C then I
+                        </DropdownMenuShortcut>
+                      </Button>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div>
+              <nav>
+                <ul>
+                  <li>
+                    <Link href={"/"}></Link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </aside>
+        </ResizablePanel>
+        <ResizableHandle className="invisible" />
+        <ResizablePanel className="rounded-lg">
+          <main>{children}</main>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+
+      {/* <div className="grid h-full w-screen grid-cols-12 overflow-hidden">
         <aside className="col-span-3 h-screen">
           <div className="flex h-full w-64 flex-col p-4">
             <nav className="flex flex-col space-y-2">
@@ -109,7 +209,7 @@ export default function DriveLayout({
         <main className="col-span-9 h-full">
           <section>{children}</section>
         </main>
-      </div>
+      </div> */}
     </div>
   );
 }
