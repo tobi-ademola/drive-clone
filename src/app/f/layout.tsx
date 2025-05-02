@@ -1,3 +1,5 @@
+"use client";
+
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   ClockIcon,
@@ -8,6 +10,7 @@ import {
   HardDriveIcon,
   HomeIcon,
   LaptopIcon,
+  MenuIcon,
   OctagonAlertIcon,
   PlusIcon,
   SearchIcon,
@@ -106,6 +109,14 @@ export default function DriveLayout({
           }}
           className="flex items-center gap-3 md:col-span-2 md:col-start-1 md:row-start-1"
         >
+          <Button
+            variant={"ghost"}
+            size={"icon"}
+            className="md:hidden"
+            onClick={() => console.log("Clicked")}
+          >
+            <MenuIcon className="aspect-square w-6" />
+          </Button>
           <Image
             src={"/icon.png"}
             alt="Google Drive Logo"
@@ -169,101 +180,107 @@ export default function DriveLayout({
         </div>
       </header>
 
-      {/* Toolbar Component End */}
-
-      <ResizablePanelGroup direction="horizontal" className="px-3 py-6 md:px-6">
-        <ResizablePanel
-          defaultSize={(2 / 12) * 100}
-          minSize={(2 / 12) * 100}
-          maxSize={(3.5 / 12) * 100}
+      {/* Content Area */}
+      <div className="h-full w-full max-md:hidden md:block">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="px-3 py-6 md:px-6"
         >
-          <aside>
-            <div className="flex w-full items-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
-                    <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
-                    New
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Button
-                        variant={"ghost"}
-                        className="w-full cursor-pointer px-1 py-0.5"
+          <ResizablePanel
+            defaultSize={(2 / 12) * 100}
+            minSize={(2 / 12) * 100}
+            maxSize={(3.5 / 12) * 100}
+          >
+            <aside>
+              <div className="flex w-full items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
+                      <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                      New
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="w-full cursor-pointer px-1 py-0.5"
+                        >
+                          <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                          New folder
+                          <DropdownMenuShortcut>
+                            Alt+C then F
+                          </DropdownMenuShortcut>
+                        </Button>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="w-full cursor-pointer px-1 py-0.5"
+                        >
+                          <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                          File upload
+                          <DropdownMenuShortcut>
+                            Alt+C then U
+                          </DropdownMenuShortcut>
+                        </Button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="w-full cursor-pointer px-1 py-0.5"
+                        >
+                          <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                          Folder upload
+                          <DropdownMenuShortcut>
+                            Alt+C then I
+                          </DropdownMenuShortcut>
+                        </Button>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div>
+                <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
+                  {Array.from(
+                    { length: Math.ceil(navItems.length / 3) },
+                    (_, i) => (
+                      <section
+                        key={i}
+                        className="flex h-full w-full flex-col gap-3"
                       >
-                        <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
-                        New folder
-                        <DropdownMenuShortcut>
-                          Alt+C then F
-                        </DropdownMenuShortcut>
-                      </Button>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Button
-                        variant={"ghost"}
-                        className="w-full cursor-pointer px-1 py-0.5"
-                      >
-                        <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
-                        File upload
-                        <DropdownMenuShortcut>
-                          Alt+C then U
-                        </DropdownMenuShortcut>
-                      </Button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Button
-                        variant={"ghost"}
-                        className="w-full cursor-pointer px-1 py-0.5"
-                      >
-                        <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
-                        Folder upload
-                        <DropdownMenuShortcut>
-                          Alt+C then I
-                        </DropdownMenuShortcut>
-                      </Button>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            <div>
-              <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4">
-                {Array.from(
-                  { length: Math.ceil(navItems.length / 3) },
-                  (_, i) => (
-                    <section
-                      key={i}
-                      className="flex h-full w-full flex-col gap-3"
-                    >
-                      <ul className="w-full">
-                        {navItems.slice(i * 3, i * 3 + 3).map((item, index) => (
-                          <li key={index} className="w-full">
-                            <Link
-                              href={item.href}
-                              className="block cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
-                            >
-                              {item.icon}
-                              <span>{item.label}</span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  ),
-                )}
-              </nav>
-            </div>
-          </aside>
-        </ResizablePanel>
-        <ResizableHandle className="invisible" />
-        <ResizablePanel className="rounded-lg">
-          <main>{children}</main>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+                        <ul>
+                          {navItems
+                            .slice(i * 3, i * 3 + 3)
+                            .map((item, index) => (
+                              <li key={index}>
+                                <Link
+                                  href={item.href}
+                                  className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+                                >
+                                  <span>{item.icon}</span>
+                                  <span>{item.label}</span>
+                                </Link>
+                              </li>
+                            ))}
+                        </ul>
+                      </section>
+                    ),
+                  )}
+                </nav>
+              </div>
+            </aside>
+          </ResizablePanel>
+          <ResizableHandle className="invisible" />
+          <ResizablePanel className="rounded-lg">
+            <main>{children}</main>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 }
