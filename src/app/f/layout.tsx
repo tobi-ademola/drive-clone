@@ -1,12 +1,21 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
+  ClockIcon,
+  CloudIcon,
   FileUpIcon,
   FolderPlusIcon,
   FolderUpIcon,
+  HardDriveIcon,
+  HomeIcon,
+  LaptopIcon,
+  OctagonAlertIcon,
   PlusIcon,
   SearchIcon,
   SettingsIcon,
   SlidersHorizontal,
+  StarIcon,
+  Trash2Icon,
+  UsersIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +35,60 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "~/components/ui/resizable";
+
+interface NavItem {
+  label: string;
+  icon: React.ReactNode;
+  href: string;
+}
+
+const navItems: NavItem[] = [
+  {
+    label: "Home",
+    icon: <HomeIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "My Drive",
+    icon: <HardDriveIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Computers",
+    icon: <LaptopIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Shared with me",
+    icon: <UsersIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Recent",
+    icon: <ClockIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Starred",
+    icon: <StarIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Spam",
+    icon: <OctagonAlertIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Bin",
+    icon: <Trash2Icon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+  {
+    label: "Storage",
+    icon: <CloudIcon className="mr-2 inline-block h-5 w-5" />,
+    href: "/",
+  },
+];
 
 export default function DriveLayout({
   children,
@@ -168,12 +231,30 @@ export default function DriveLayout({
               </DropdownMenu>
             </div>
             <div>
-              <nav>
-                <ul>
-                  <li>
-                    <Link href={"/"}></Link>
-                  </li>
-                </ul>
+              <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4">
+                {Array.from(
+                  { length: Math.ceil(navItems.length / 3) },
+                  (_, i) => (
+                    <section
+                      key={i}
+                      className="flex h-full w-full flex-col gap-3"
+                    >
+                      <ul className="w-full">
+                        {navItems.slice(i * 3, i * 3 + 3).map((item, index) => (
+                          <li key={index} className="w-full">
+                            <Link
+                              href={item.href}
+                              className="block cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+                            >
+                              {item.icon}
+                              <span>{item.label}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ),
+                )}
               </nav>
             </div>
           </aside>
@@ -183,33 +264,6 @@ export default function DriveLayout({
           <main>{children}</main>
         </ResizablePanel>
       </ResizablePanelGroup>
-
-      {/* <div className="grid h-full w-screen grid-cols-12 overflow-hidden">
-        <aside className="col-span-3 h-screen">
-          <div className="flex h-full w-64 flex-col p-4">
-            <nav className="flex flex-col space-y-2">
-              <a href="#" className="rounded p-2 hover:bg-gray-700">
-                My Drive
-              </a>
-              <a href="#" className="rounded p-2 hover:bg-gray-700">
-                Shared with me
-              </a>
-              <a href="#" className="rounded p-2 hover:bg-gray-700">
-                Recent
-              </a>
-              <a href="#" className="rounded p-2 hover:bg-gray-700">
-                Starred
-              </a>
-              <a href="#" className="rounded p-2 hover:bg-gray-700">
-                Trash
-              </a>
-            </nav>
-          </div>
-        </aside>
-        <main className="col-span-9 h-full">
-          <section>{children}</section>
-        </main>
-      </div> */}
     </div>
   );
 }
