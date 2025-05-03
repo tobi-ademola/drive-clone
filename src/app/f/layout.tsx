@@ -184,11 +184,11 @@ export default function DriveLayout({
         </div>
       </header>
 
-      {/* Content Area */}
-      <div className="h-full w-full max-md:hidden md:block">
+      {/* Desktop Content Area */}
+      <div className="h-[90%] w-full max-md:hidden md:block">
         <ResizablePanelGroup
           direction="horizontal"
-          className="px-3 py-6 md:px-6"
+          className="px-3 py-3 md:px-6"
         >
           <ResizablePanel
             defaultSize={(2 / 12) * 100}
@@ -280,7 +280,7 @@ export default function DriveLayout({
             </aside>
           </ResizablePanel>
           <ResizableHandle className="invisible" />
-          <ResizablePanel className="rounded-lg">
+          <ResizablePanel className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
             <main>{children}</main>
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -367,9 +367,11 @@ export default function DriveLayout({
           </nav>
         </div>
       </aside>
-      <main className="block h-full w-full rounded-lg md:hidden">
-        {children}
-      </main>
+      <div className="h-full w-full px-3 max-md:block md:hidden md:px-6">
+        <main className="h-11/12 w-full rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

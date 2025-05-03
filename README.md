@@ -18,6 +18,7 @@
 - [x] Integrated dark mode
 - [x] Test the toolbar in dark mode
 - [x] Add the filter button and search button icon
-- [ ] Make the Sidebar responsive
+- [x] Make the Sidebar responsive
 - [ ] Implement the item-row component with data tables
+- [ ] Add the New button on the mobile interface
 - [ ] Create the search dropdown
