@@ -19,9 +19,11 @@ import {
   StarIcon,
   Trash2Icon,
   UsersIcon,
+  XIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { Button } from "~/components/ui/button";
 import {
@@ -98,6 +100,8 @@ export default function DriveLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
       {/* Toolbar Component */}
@@ -113,7 +117,7 @@ export default function DriveLayout({
             variant={"ghost"}
             size={"icon"}
             className="md:hidden"
-            onClick={() => console.log("Clicked")}
+            onClick={() => setMenuOpen(true)}
           >
             <MenuIcon className="aspect-square w-6" />
           </Button>
@@ -281,6 +285,91 @@ export default function DriveLayout({
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+
+      {/* Mobile Content Area */}
+      <aside
+        className={`absolute top-0 -left-full z-50 h-full w-[90vw] max-w-sm -translate-x-full overflow-hidden rounded-lg bg-neutral-300 p-4 text-neutral-700 transition-all duration-1000 max-md:block md:hidden dark:bg-neutral-700 dark:text-neutral-200 ${menuOpen ? "left-0" : "-left-full"}`}
+      >
+        <div className="flex w-full items-center justify-end">
+          <Button
+            variant={"ghost"}
+            size={"icon"}
+            onClick={() => setMenuOpen(false)}
+          >
+            <XIcon className="aspect-square w-10 scale-120" />
+          </Button>
+        </div>
+        {/* <div className="flex w-full items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
+                <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                New
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant={"ghost"}
+                    className="w-full cursor-pointer px-1 py-0.5"
+                  >
+                    <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                    New folder
+                    <DropdownMenuShortcut>Alt+C then F</DropdownMenuShortcut>
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant={"ghost"}
+                    className="w-full cursor-pointer px-1 py-0.5"
+                  >
+                    <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                    File upload
+                    <DropdownMenuShortcut>Alt+C then U</DropdownMenuShortcut>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant={"ghost"}
+                    className="w-full cursor-pointer px-1 py-0.5"
+                  >
+                    <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                    Folder upload
+                    <DropdownMenuShortcut>Alt+C then I</DropdownMenuShortcut>
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div> */}
+        <div>
+          <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
+            {Array.from({ length: Math.ceil(navItems.length / 3) }, (_, i) => (
+              <section key={i} className="flex h-full w-full flex-col gap-3">
+                <ul>
+                  {navItems.slice(i * 3, i * 3 + 3).map((item, index) => (
+                    <li key={index}>
+                      <Link
+                        href={item.href}
+                        className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+                      >
+                        <span>{item.icon}</span>
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </nav>
+        </div>
+      </aside>
+      <main className="block h-full w-full rounded-lg md:hidden">
+        {children}
+      </main>
     </div>
   );
 }
