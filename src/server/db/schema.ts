@@ -51,4 +51,4 @@ export const folders_table = createTable(
   ],
 );
 
-export const DB_FolderType = typeof folders_table.$inferSelect;
+export type DB_FolderType = typeof folders_table.$inferSelect;

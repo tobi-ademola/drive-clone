@@ -81,7 +81,7 @@ export const MUTATIONS = {
     const rootFolder = await db
       .insert(foldersSchema)
       .values({
-        name: "Root",
+        name: "My Drive",
         parent: null,
         ownerId: userId,
       })

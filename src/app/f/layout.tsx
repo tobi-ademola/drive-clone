@@ -280,8 +280,11 @@ export default function DriveLayout({
             </aside>
           </ResizablePanel>
           <ResizableHandle className="invisible" />
-          <ResizablePanel className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
-            <main>{children}</main>
+          <ResizablePanel
+            defaultSize={(10 / 12) * 100}
+            className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+          >
+            <main className="px-6">{children}</main>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
