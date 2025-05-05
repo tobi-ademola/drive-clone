@@ -23,7 +23,7 @@
 - [ ] Reimplement the upload button
 - [x] Redesign the breadcrunmbs UI
 - [ ] Confirm files that belong to a user and indicate with "me" and the email for other users
-- [ ] Access Control
+- [x] Access Control
 - [ ] Folder deletions (perhaps renames)
 - [ ] Disable a file row while its being deleted
 - [ ] Add the New button on the mobile interface

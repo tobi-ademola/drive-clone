@@ -46,7 +46,8 @@ export const QUERIES = {
     const folder = await db
       .select()
       .from(foldersSchema)
-      .where(eq(foldersSchema.id, folderId));
+      .where(eq(foldersSchema.id, folderId))
+      .limit(1);
     return folder[0];
   },
   getRootFolderForUser: async function (userId: string) {

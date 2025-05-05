@@ -10,6 +10,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function GoogleDriveClone(props: {
   params: Promise<{ folderId: string }>;
@@ -26,6 +28,32 @@ export default async function GoogleDriveClone(props: {
     );
   }
 
+  const session = await auth();
+
+  if (!session.userId) redirect("/sign-in");
+
+  const currentFolder = await QUERIES.getFolderById(parsedFolderId);
+
+  if (currentFolder?.ownerId !== session.userId) {
+    const rootFolder = await QUERIES.getRootFolderForUser(session.userId);
+
+    return rootFolder ? (
+      <div className="grid h-full w-full place-items-center">
+        <h2 className="text-2xl text-red-500">
+          Access denied: You are not authorised to view this folder. Return to{" "}
+          <Link
+            href={`/f/${rootFolder.id}`}
+            className="text-blue-500 hover:underline"
+          >
+            Drive
+          </Link>
+        </h2>
+      </div>
+    ) : (
+      redirect("/sign-in")
+    );
+  }
+
   const [folders, files, parents] = await Promise.all([
     QUERIES.getFolders(parsedFolderId),
     QUERIES.getFiles(parsedFolderId),
@@ -33,15 +61,8 @@ export default async function GoogleDriveClone(props: {
   ]);
 
   const data = [...folders, ...files];
-  console.log(parents);
 
   return (
-    // <DriveContents
-    //   files={files}
-    //   folders={folders}
-    //   parents={parents}
-    //   currentFolderId={parsedFolderId}
-    // />
     <>
       <section>
         <Breadcrumb className="py-3">
