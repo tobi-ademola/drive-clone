@@ -56,6 +56,7 @@ export const columns: ColumnDef<DB_FileType | DB_FolderType>[] = [
   {
     accessorKey: "ownerId",
     header: "Owner",
+    cell: () => <p>me</p>,
   },
   {
     accessorKey: "createdAt",

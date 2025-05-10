@@ -20,12 +20,15 @@
 - [x] Add the filter button and search button icon
 - [x] Make the Sidebar responsive
 - [x] Basic implementation of the item-row component with data tables
-- [ ] Reimplement the upload button
 - [x] Redesign the breadcrunmbs UI
-- [ ] Confirm files that belong to a user and indicate with "me" and the email for other users
 - [x] Access Control
+- [ ] Implement item actions: file upload, folder uplaod, and folder creation
+- [ ] Add the New button on the mobile interface
 - [ ] Folder deletions (perhaps renames)
 - [ ] Disable a file row while its being deleted
-- [ ] Add the New button on the mobile interface
 - [ ] Create a file view page
+- [ ] Update schemas to add allowedUsers, fileKey, and isHidden
+- [ ] Modify file deletion
+- [ ] Modify onboarduser folders creation
+- [ ] Confirm files that belong to a user and indicate with "me" and the email for other users
 - [ ] Create the search dropdown

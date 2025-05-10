@@ -23,7 +23,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import {
+  useState,
+  useRef,
+  useCallback,
+  type ChangeEvent,
+  useEffect,
+} from "react";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { Button } from "~/components/ui/button";
 import {
@@ -34,12 +40,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+
+import { useParams } from "next/navigation";
 import { Input } from "~/components/ui/input";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "~/components/ui/resizable";
+import { useRouter } from "next/navigation";
+import { uploadFiles } from "~/components/uploadthing";
 
 interface NavItem {
   label: string;
@@ -101,6 +111,66 @@ export default function DriveLayout({
   children: React.ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const uploadFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const params = useParams<{ folderId: string }>();
+  const navigate = useRouter();
+
+  const startUpload = useCallback(
+    async (files: File[]) => {
+      await uploadFiles("driveUploader", {
+        files,
+        input: { folderId: Number(params.folderId) },
+        onUploadProgress: (status) => setUploadProgress(status.progress),
+        onUploadBegin: () => console.info("toast: upload began!"),
+      })
+        .catch((e) => {
+          throw e;
+        })
+        .then(() => navigate.refresh());
+    },
+    [params.folderId, navigate],
+  );
+
+  const initiateFileUpload = useCallback(() => {
+    console.log("Initiate file upload triggered");
+    if (uploadFileInputRef.current) {
+      uploadFileInputRef.current.click();
+    } else {
+      console.error("File input ref is not set");
+    }
+  }, [uploadFileInputRef]);
+
+  const handleFileUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    console.log("File upload event triggered");
+    const filesList = e.target.files;
+
+    if (!filesList || filesList.length === 0) {
+      console.log("No files selected");
+      return;
+    }
+
+    const filesArr: File[] = Array.from(filesList);
+    console.log("Files selected:", filesArr);
+    setFiles(filesArr);
+
+    e.target.value = "";
+  }, []);
+
+  useEffect(() => {
+    console.log(files);
+    if (files.length > 0) {
+      const res = startUpload(files);
+      console.log(res);
+    }
+  }, [files, startUpload]);
+
+  useEffect(() => {
+    console.log(uploadProgress);
+  }, [uploadProgress]);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
@@ -184,6 +254,15 @@ export default function DriveLayout({
         </div>
       </header>
 
+      {/* Hidden file input that handles all the upload requests */}
+      <input
+        className="hidden"
+        type="file"
+        ref={uploadFileInputRef}
+        multiple
+        onChange={handleFileUpload}
+      />
+
       {/* Desktop Content Area */}
       <div className="h-[90%] w-full max-md:hidden md:block">
         <ResizablePanelGroup
@@ -219,11 +298,13 @@ export default function DriveLayout({
                         </Button>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
+
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
                         <Button
                           variant={"ghost"}
                           className="w-full cursor-pointer px-1 py-0.5"
+                          onClick={initiateFileUpload}
                         >
                           <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
                           File upload

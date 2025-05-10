@@ -22,7 +22,7 @@ export default async function GoogleDriveClone(props: {
 
   if (isNaN(parsedFolderId)) {
     return (
-      <section className="grid h-full w-full place-items-center">
+      <section className="grid h-full w-full place-items-center text-red-500">
         Invalid Folder ID
       </section>
     );
@@ -72,7 +72,7 @@ export default async function GoogleDriveClone(props: {
                 <BreadcrumbItem>
                   <BreadcrumbLink
                     asChild
-                    className="text-3xl text-neutral-300 hover:text-white"
+                    className="text-3xl text-neutral-700 hover:text-black dark:text-neutral-300 dark:hover:text-white"
                   >
                     <Link href={`/f/${folder.id}`}>{folder.name}</Link>
                   </BreadcrumbLink>
