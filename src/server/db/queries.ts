@@ -46,7 +46,8 @@ export const QUERIES = {
     const folder = await db
       .select()
       .from(foldersSchema)
-      .where(eq(foldersSchema.id, folderId));
+      .where(eq(foldersSchema.id, folderId))
+      .limit(1);
     return folder[0];
   },
   getRootFolderForUser: async function (userId: string) {
@@ -81,7 +82,7 @@ export const MUTATIONS = {
     const rootFolder = await db
       .insert(foldersSchema)
       .values({
-        name: "Root",
+        name: "My Drive",
         parent: null,
         ownerId: userId,
       })
