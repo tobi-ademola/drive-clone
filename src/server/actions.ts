@@ -6,6 +6,7 @@ import { files_table } from "./db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
+import { MUTATIONS } from "./db/queries";
 
 const utApi = new UTApi();
 
@@ -42,4 +43,26 @@ export async function deleteFile(fileId: number) {
   c.set("force-refresh", JSON.stringify(Math.random()));
 
   return { success: true };
+}
+
+export async function generateFolderUploadPaths(
+  relPathNames: string[],
+  folderId: string,
+  userId: string,
+) {
+  if (!Number(folderId)) {
+    console.error("Invalid folder ID");
+    return;
+  }
+  if (!userId) {
+    console.error("Not authenticated");
+    return;
+  }
+  const relPathsId = await MUTATIONS.generateFolderUploadPaths(
+    Number(folderId),
+    relPathNames,
+    userId,
+  );
+
+  return relPathsId;
 }
