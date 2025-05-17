@@ -22,7 +22,9 @@
 - [x] Basic implementation of the item-row component with data tables
 - [x] Redesign the breadcrunmbs UI
 - [x] Access Control
-- [ ] Implement item actions: file upload, folder uplaod, and folder creation
+- [x] Implement item actions: file upload
+- [ ] Implement item actions: folder creation
+- [ ] Implement item actions: folder upload
 - [ ] Add the New button on the mobile interface
 - [ ] Folder deletions (perhaps renames)
 - [ ] Disable a file row while its being deleted

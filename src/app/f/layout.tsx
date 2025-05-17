@@ -1,6 +1,12 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  useAuth,
+  UserButton,
+} from "@clerk/nextjs";
 import {
   ClockIcon,
   CloudIcon,
@@ -50,6 +56,7 @@ import {
 } from "~/components/ui/resizable";
 import { useRouter } from "next/navigation";
 import { uploadFiles } from "~/components/uploadthing";
+import { generateFolderUploadPaths } from "~/server/actions";
 
 interface NavItem {
   label: string;
@@ -110,31 +117,47 @@ export default function DriveLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Layout states
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Upload states
   const [uploadProgress, setUploadProgress] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
+  const [dirFiles, setDirFiles] = useState<File[]>([]);
 
+  // Auth values
+
+  const user = useAuth();
+
+  // Selectors
   const uploadFileInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadFolderInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Path functions
   const params = useParams<{ folderId: string }>();
   const navigate = useRouter();
 
+  // Asychronous helpers
   const startUpload = useCallback(
-    async (files: File[]) => {
+    async (files: File[], input: { folderId: number }) => {
       await uploadFiles("driveUploader", {
         files,
-        input: { folderId: Number(params.folderId) },
+        input,
         onUploadProgress: (status) => setUploadProgress(status.progress),
         onUploadBegin: () => console.info("toast: upload began!"),
       })
         .catch((e) => {
           throw e;
         })
-        .then(() => navigate.refresh());
+        .then(() => {
+          navigate.refresh();
+          setUploadProgress(0);
+        });
     },
-    [params.folderId, navigate],
+    [navigate],
   );
 
+  // Upload Initiators
   const initiateFileUpload = useCallback(() => {
     console.log("Initiate file upload triggered");
     if (uploadFileInputRef.current) {
@@ -144,6 +167,16 @@ export default function DriveLayout({
     }
   }, [uploadFileInputRef]);
 
+  const initiateFolderUpload = useCallback(() => {
+    console.log("Initiate folder upload triggered");
+    if (uploadFolderInputRef.current) {
+      uploadFolderInputRef.current.click();
+    } else {
+      console.error("Folder input ref is not set");
+    }
+  }, [uploadFolderInputRef]);
+
+  // Upload handlers
   const handleFileUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     console.log("File upload event triggered");
     const filesList = e.target.files;
@@ -160,13 +193,94 @@ export default function DriveLayout({
     e.target.value = "";
   }, []);
 
+  const handleFolderUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    console.log("Folder upload event triggered");
+
+    const filesList = e.target.files;
+
+    if (!filesList || filesList.length === 0) {
+      console.log("No folders selected");
+      return;
+    }
+
+    const filesArr = Array.from(filesList);
+    setDirFiles(filesArr);
+    console.log(filesArr);
+
+    e.target.value = "";
+  }, []);
+
+  // Upload effectors
   useEffect(() => {
     console.log(files);
     if (files.length > 0) {
-      const res = startUpload(files);
+      const res = startUpload(files, { folderId: Number(params.folderId) });
       console.log(res);
+      setFiles([]);
     }
-  }, [files, startUpload]);
+  }, [files, startUpload, params.folderId]);
+
+  // Debounce uploads: prevent new uploads if one is in progress, and lock params.folderId during upload
+  const [isUploading, setIsUploading] = useState(false);
+  const lockedParamsRef = useRef<{ folderId: string | undefined }>({
+    folderId: params.folderId,
+  });
+
+  useEffect(() => {
+    if (dirFiles.length > 0 && !isUploading) {
+      if (!user.userId) {
+        console.log("Not authenticated");
+        setDirFiles([]);
+        return;
+      }
+
+      setIsUploading(true);
+      lockedParamsRef.current.folderId = params.folderId;
+
+      const uploadAll = async () => {
+        for (const file of dirFiles) {
+          const relPathNames = file.webkitRelativePath.split("/");
+          console.log(relPathNames);
+
+          try {
+            if (!lockedParamsRef.current.folderId) {
+              console.error("Folder ID is undefined");
+              setIsUploading(false);
+              setDirFiles([]);
+              return;
+            }
+
+            console.log("folder ID is defined");
+
+            const relPathsId = await generateFolderUploadPaths(
+              relPathNames,
+              lockedParamsRef.current.folderId,
+              user.userId,
+            );
+
+            console.log(relPathsId);
+
+            if (relPathsId && relPathsId?.length !== 0) {
+              console.log(relPathsId);
+              await startUpload([file], {
+                folderId: Number(relPathsId[relPathsId.length - 1]),
+              });
+            }
+          } catch (e) {
+            console.error(e);
+            break;
+          }
+        }
+
+        console.log("Finished uploading all files");
+        setIsUploading(false);
+        setDirFiles([]);
+      };
+
+      void uploadAll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirFiles, startUpload, user.userId]);
 
   useEffect(() => {
     console.log(uploadProgress);
@@ -262,6 +376,15 @@ export default function DriveLayout({
         multiple
         onChange={handleFileUpload}
       />
+      <input
+        className="hidden"
+        type="file"
+        ref={uploadFolderInputRef}
+        multiple
+        // @ts-expect-error: webkitdirectory is not in TS types, but works in browsers
+        webkitdirectory="true"
+        onChange={handleFolderUpload}
+      />
 
       {/* Desktop Content Area */}
       <div className="h-[90%] w-full max-md:hidden md:block">
@@ -317,6 +440,7 @@ export default function DriveLayout({
                         <Button
                           variant={"ghost"}
                           className="w-full cursor-pointer px-1 py-0.5"
+                          onClick={initiateFolderUpload}
                         >
                           <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
                           Folder upload
