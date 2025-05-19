@@ -24,7 +24,7 @@
 - [x] Access Control
 - [x] Implement item actions: file upload
 - [ ] Implement item actions: folder creation
-- [ ] Implement item actions: folder upload
+- [x] Implement item actions: folder upload
 - [ ] Add the New button on the mobile interface
 - [ ] Folder deletions (perhaps renames)
 - [ ] Disable a file row while its being deleted
