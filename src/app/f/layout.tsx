@@ -301,7 +301,7 @@ export default function DriveLayout({
   }, [uploadProgress]);
 
   return (
-    <div className="flex h-dvh w-full flex-col overflow-hidden border-3 border-green-400 bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
       {/* Toolbar Component */}
       <header className="grid grid-cols-12 grid-rows-2 gap-y-3 px-3 py-2.5 md:grid-rows-1 md:gap-y-0 md:px-6">
         <div
@@ -401,7 +401,7 @@ export default function DriveLayout({
       />
 
       {/* Desktop Content Area */}
-      <div className="h-full w-full border-3 border-red-400 max-md:hidden md:block">
+      <div className="h-full w-full max-md:hidden md:block">
         <ResizablePanelGroup
           direction="horizontal"
           className="px-3 py-3 md:px-6"
