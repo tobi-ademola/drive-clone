@@ -132,7 +132,7 @@ export default function DriveLayout({
   const [menuOpen, setMenuOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("Untitled folder");
   const [newFolderDialogOpen, setNewFolderDialogOpen] = useState(false);
-  const [container, setContainer] = useState<HTMLElement | null>(null);
+  // const [container, setContainer] = useState<HTMLElement | null>(null);
 
   // Upload states
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -301,266 +301,259 @@ export default function DriveLayout({
   }, [uploadProgress]);
 
   return (
-    <div
-      className="grid h-screen w-screen place-items-center overflow-hidden"
-      ref={setContainer}
-    >
-      <div className="h-full w-full bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
-        {/* Toolbar Component */}
-        <header className="grid grid-cols-12 grid-rows-2 gap-y-3 px-3 py-2.5 md:grid-rows-1 md:gap-y-0 md:px-6">
-          <div
-            style={{
-              gridRow: "1 / span 1",
-              gridColumn: "1 / 7",
-            }}
-            className="flex items-center gap-3 md:col-span-2 md:col-start-1 md:row-start-1"
+    <div className="flex h-dvh w-full flex-col overflow-hidden border-3 border-green-400 bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+      {/* Toolbar Component */}
+      <header className="grid grid-cols-12 grid-rows-2 gap-y-3 px-3 py-2.5 md:grid-rows-1 md:gap-y-0 md:px-6">
+        <div
+          style={{
+            gridRow: "1 / span 1",
+            gridColumn: "1 / 7",
+          }}
+          className="flex items-center gap-3 md:col-span-2 md:col-start-1 md:row-start-1"
+        >
+          <Button
+            variant={"ghost"}
+            size={"icon"}
+            className="md:hidden"
+            onClick={() => setMenuOpen(true)}
           >
-            <Button
-              variant={"ghost"}
-              size={"icon"}
-              className="md:hidden"
-              onClick={() => setMenuOpen(true)}
-            >
-              <MenuIcon className="aspect-square w-6" />
-            </Button>
-            <Image
-              src={"/icon.png"}
-              alt="Google Drive Logo"
-              width={40}
-              height={40}
-            />
-            <h2 className="cursor-pointer text-[1.3rem] font-medium hover:underline">
-              Drive
-            </h2>
-          </div>
-
-          <div className="relative col-span-12 grid items-center md:col-span-7 md:col-start-3 md:row-start-1">
-            <Button
-              size={"icon"}
-              variant={"ghost"}
-              type={"submit"}
-              aria-label="Search"
-              className="absolute ml-3 cursor-pointer justify-self-start rounded-full p-2 hover:bg-neutral-400 dark:hover:bg-neutral-500"
-            >
-              <SearchIcon className="aspect-square w-6 text-neutral-500 hover:text-neutral-400 dark:text-neutral-200" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={"ghost"}
-              aria-label="Filter"
-              className="absolute mr-3 cursor-pointer justify-self-end rounded-full p-2 hover:bg-neutral-400 dark:hover:bg-neutral-500"
-            >
-              <SlidersHorizontal className="aspect-square w-6 text-neutral-500 hover:text-neutral-400 dark:text-neutral-200" />
-            </Button>
-
-            <Input
-              placeholder="Search in Drive"
-              type="search"
-              aria-label="Search in Drive"
-              className="h-12 w-full rounded-[32rem] bg-neutral-300 px-14 py-4 font-semibold ring-offset-0 md:text-2xl dark:bg-neutral-700"
-            />
-          </div>
-
-          <div
-            style={{ gridRow: "1 / span 1", gridColumn: "7 / 13" }}
-            className="flex items-center justify-end gap-4 md:col-span-3 md:col-start-10 md:row-start-1"
-          >
-            <Link
-              href={"/f/settings"}
-              aria-label="Settings"
-              className="rounded-full p-2 hover:bg-neutral-300 dark:hover:bg-neutral-500"
-            >
-              <SettingsIcon className="aspect-square w-6 text-neutral-500 dark:text-neutral-200" />
-            </Link>
-            <div className="flex scale-50 items-center">
-              <SignedOut>
-                <SignInButton />
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-            </div>
-            <div>
-              <ModeToggle />
-            </div>
-          </div>
-        </header>
-
-        {/* Hidden file input that handles all the upload requests */}
-        <input
-          className="hidden"
-          type="file"
-          ref={uploadFileInputRef}
-          multiple
-          onChange={handleFileUpload}
-        />
-        <input
-          className="hidden"
-          type="file"
-          ref={uploadFolderInputRef}
-          multiple
-          // @ts-expect-error: webkitdirectory is not in TS types, but works in browsers
-          webkitdirectory="true"
-          onChange={handleFolderUpload}
-        />
-
-        {/* Desktop Content Area */}
-        <div className="h-[90%] w-full max-md:hidden md:block">
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="px-3 py-3 md:px-6"
-          >
-            <ResizablePanel
-              defaultSize={(2 / 12) * 100}
-              minSize={(2 / 12) * 100}
-              maxSize={(3.5 / 12) * 100}
-            >
-              <aside>
-                <div className="flex w-full items-center">
-                  <Dialog
-                    open={newFolderDialogOpen}
-                    onOpenChange={setNewFolderDialogOpen}
-                    modal
-                  >
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
-                          <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
-                          New
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem asChild>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant={"ghost"}
-                                className="w-full cursor-pointer px-1 py-0.5"
-                              >
-                                <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
-                                New folder
-                                <DropdownMenuShortcut>
-                                  Alt+C then F
-                                </DropdownMenuShortcut>
-                              </Button>
-                            </DialogTrigger>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem asChild>
-                            <Button
-                              variant={"ghost"}
-                              className="w-full cursor-pointer px-1 py-0.5"
-                              onClick={initiateFileUpload}
-                            >
-                              <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
-                              File upload
-                              <DropdownMenuShortcut>
-                                Alt+C then U
-                              </DropdownMenuShortcut>
-                            </Button>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Button
-                              variant={"ghost"}
-                              className="w-full cursor-pointer px-1 py-0.5"
-                              onClick={initiateFolderUpload}
-                            >
-                              <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
-                              Folder upload
-                              <DropdownMenuShortcut>
-                                Alt+C then I
-                              </DropdownMenuShortcut>
-                            </Button>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DialogPortal
-                      container={container}
-                      data-slot="dialog-portal"
-                    >
-                      <DialogOverlay />
-
-                      <DialogContent>
-                        <DialogHeader className="text-left">
-                          <DialogTitle>New Folder</DialogTitle>
-                        </DialogHeader>
-                        <div>
-                          <Input
-                            id="newFolder"
-                            value={newFolderName}
-                            onChange={(e) => setNewFolderName(e.target.value)}
-                          />
-                        </div>
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button type="button" variant="secondary">
-                              Close
-                            </Button>
-                          </DialogClose>
-                          <Button type="submit">Create</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </DialogPortal>
-                  </Dialog>
-                </div>
-                <div>
-                  <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
-                    {Array.from(
-                      { length: Math.ceil(navItems.length / 3) },
-                      (_, i) => (
-                        <section
-                          key={i}
-                          className="flex h-full w-full flex-col gap-3"
-                        >
-                          <ul>
-                            {navItems
-                              .slice(i * 3, i * 3 + 3)
-                              .map((item, index) => (
-                                <li key={index}>
-                                  <Link
-                                    href={item.href}
-                                    className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
-                                  >
-                                    <span>{item.icon}</span>
-                                    <span>{item.label}</span>
-                                  </Link>
-                                </li>
-                              ))}
-                          </ul>
-                        </section>
-                      ),
-                    )}
-                  </nav>
-                </div>
-              </aside>
-            </ResizablePanel>
-            <ResizableHandle className="invisible" />
-            <ResizablePanel
-              defaultSize={(10 / 12) * 100}
-              className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
-            >
-              <main className="px-6">{children}</main>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            <MenuIcon className="aspect-square w-6" />
+          </Button>
+          <Image
+            src={"/icon.png"}
+            alt="Google Drive Logo"
+            width={40}
+            height={40}
+          />
+          <h2 className="cursor-pointer text-[1.3rem] font-medium hover:underline">
+            Drive
+          </h2>
         </div>
 
-        {/* Mobile Content Area */}
-        <aside
-          className={`absolute top-0 -left-full z-50 h-full w-[90vw] max-w-sm -translate-x-full overflow-hidden rounded-lg bg-neutral-300 p-4 text-neutral-700 transition-all duration-1000 max-md:block md:hidden dark:bg-neutral-700 dark:text-neutral-200 ${menuOpen ? "left-0" : "-left-full"}`}
+        <div className="relative col-span-12 grid items-center md:col-span-7 md:col-start-3 md:row-start-1">
+          <Button
+            size={"icon"}
+            variant={"ghost"}
+            type={"submit"}
+            aria-label="Search"
+            className="absolute ml-3 cursor-pointer justify-self-start rounded-full p-2 hover:bg-neutral-400 dark:hover:bg-neutral-500"
+          >
+            <SearchIcon className="aspect-square w-6 text-neutral-500 hover:text-neutral-400 dark:text-neutral-200" />
+          </Button>
+          <Button
+            size={"icon"}
+            variant={"ghost"}
+            aria-label="Filter"
+            className="absolute mr-3 cursor-pointer justify-self-end rounded-full p-2 hover:bg-neutral-400 dark:hover:bg-neutral-500"
+          >
+            <SlidersHorizontal className="aspect-square w-6 text-neutral-500 hover:text-neutral-400 dark:text-neutral-200" />
+          </Button>
+
+          <Input
+            placeholder="Search in Drive"
+            type="search"
+            aria-label="Search in Drive"
+            className="h-12 w-full rounded-[32rem] bg-neutral-300 px-14 py-4 font-semibold ring-offset-0 md:text-2xl dark:bg-neutral-700"
+          />
+        </div>
+
+        <div
+          style={{ gridRow: "1 / span 1", gridColumn: "7 / 13" }}
+          className="flex items-center justify-end gap-4 md:col-span-3 md:col-start-10 md:row-start-1"
         >
-          <div className="flex w-full items-center justify-end">
-            <Button
-              variant={"ghost"}
-              size={"icon"}
-              onClick={() => setMenuOpen(false)}
-            >
-              <XIcon className="aspect-square w-10 scale-120" />
-            </Button>
+          <Link
+            href={"/f/settings"}
+            aria-label="Settings"
+            className="rounded-full p-2 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+          >
+            <SettingsIcon className="aspect-square w-6 text-neutral-500 dark:text-neutral-200" />
+          </Link>
+          <div className="flex scale-50 items-center">
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
-          {/* <div className="flex w-full items-center">
+          <div>
+            <ModeToggle />
+          </div>
+        </div>
+      </header>
+
+      {/* Hidden file input that handles all the upload requests */}
+      <input
+        className="hidden"
+        type="file"
+        ref={uploadFileInputRef}
+        multiple
+        onChange={handleFileUpload}
+      />
+      <input
+        className="hidden"
+        type="file"
+        ref={uploadFolderInputRef}
+        multiple
+        // @ts-expect-error: webkitdirectory is not in TS types, but works in browsers
+        webkitdirectory="true"
+        onChange={handleFolderUpload}
+      />
+
+      {/* Desktop Content Area */}
+      <div className="h-full w-full border-3 border-red-400 max-md:hidden md:block">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="px-3 py-3 md:px-6"
+        >
+          <ResizablePanel
+            defaultSize={(2 / 12) * 100}
+            minSize={(2 / 12) * 100}
+            maxSize={(3.5 / 12) * 100}
+          >
+            <aside>
+              <div className="flex w-full items-center">
+                <Dialog
+                  open={newFolderDialogOpen}
+                  onOpenChange={setNewFolderDialogOpen}
+                  modal
+                >
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
+                        <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                        New
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant={"ghost"}
+                              className="w-full cursor-pointer px-1 py-0.5"
+                            >
+                              <FolderPlusIcon className="mr-2 aspect-square w-4 scale-115" />
+                              New folder
+                              <DropdownMenuShortcut>
+                                Alt+C then F
+                              </DropdownMenuShortcut>
+                            </Button>
+                          </DialogTrigger>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            variant={"ghost"}
+                            className="w-full cursor-pointer px-1 py-0.5"
+                            onClick={initiateFileUpload}
+                          >
+                            <FileUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                            File upload
+                            <DropdownMenuShortcut>
+                              Alt+C then U
+                            </DropdownMenuShortcut>
+                          </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            variant={"ghost"}
+                            className="w-full cursor-pointer px-1 py-0.5"
+                            onClick={initiateFolderUpload}
+                          >
+                            <FolderUpIcon className="mr-2 aspect-square w-4 scale-115" />
+                            Folder upload
+                            <DropdownMenuShortcut>
+                              Alt+C then I
+                            </DropdownMenuShortcut>
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DialogPortal data-slot="dialog-portal">
+                    <DialogOverlay />
+
+                    <DialogContent>
+                      <DialogHeader className="text-left">
+                        <DialogTitle>New Folder</DialogTitle>
+                      </DialogHeader>
+                      <div>
+                        <Input
+                          id="newFolder"
+                          value={newFolderName}
+                          onChange={(e) => setNewFolderName(e.target.value)}
+                        />
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button" variant="secondary">
+                            Close
+                          </Button>
+                        </DialogClose>
+                        <Button type="submit">Create</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </DialogPortal>
+                </Dialog>
+              </div>
+              <div>
+                <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
+                  {Array.from(
+                    { length: Math.ceil(navItems.length / 3) },
+                    (_, i) => (
+                      <section
+                        key={i}
+                        className="flex h-full w-full flex-col gap-3"
+                      >
+                        <ul>
+                          {navItems
+                            .slice(i * 3, i * 3 + 3)
+                            .map((item, index) => (
+                              <li key={index}>
+                                <Link
+                                  href={item.href}
+                                  className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+                                >
+                                  <span>{item.icon}</span>
+                                  <span>{item.label}</span>
+                                </Link>
+                              </li>
+                            ))}
+                        </ul>
+                      </section>
+                    ),
+                  )}
+                </nav>
+              </div>
+            </aside>
+          </ResizablePanel>
+          <ResizableHandle className="invisible" />
+          <ResizablePanel
+            defaultSize={(10 / 12) * 100}
+            className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+          >
+            <main className="overflow-auto px-6">{children}</main>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+
+      {/* Mobile Content Area */}
+      <aside
+        className={`absolute top-0 -left-full z-50 h-full w-[90vw] max-w-sm -translate-x-full overflow-hidden rounded-lg bg-neutral-300 p-4 text-neutral-700 transition-all duration-1000 max-md:block md:hidden dark:bg-neutral-700 dark:text-neutral-200 ${menuOpen ? "left-0" : "-left-full"}`}
+      >
+        <div className="flex w-full items-center justify-end">
+          <Button
+            variant={"ghost"}
+            size={"icon"}
+            onClick={() => setMenuOpen(false)}
+          >
+            <XIcon className="aspect-square w-10 scale-120" />
+          </Button>
+        </div>
+        {/* <div className="flex w-full items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
@@ -606,39 +599,32 @@ export default function DriveLayout({
             </DropdownMenuContent>
           </DropdownMenu>
         </div> */}
-          <div>
-            <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
-              {Array.from(
-                { length: Math.ceil(navItems.length / 3) },
-                (_, i) => (
-                  <section
-                    key={i}
-                    className="flex h-full w-full flex-col gap-3"
-                  >
-                    <ul>
-                      {navItems.slice(i * 3, i * 3 + 3).map((item, index) => (
-                        <li key={index}>
-                          <Link
-                            href={item.href}
-                            className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
-                          >
-                            <span>{item.icon}</span>
-                            <span>{item.label}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ),
-              )}
-            </nav>
-          </div>
-        </aside>
-        <div className="h-full w-full px-3 max-md:block md:hidden md:px-6">
-          <main className="h-11/12 w-full rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
-            {children}
-          </main>
+        <div>
+          <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
+            {Array.from({ length: Math.ceil(navItems.length / 3) }, (_, i) => (
+              <section key={i} className="flex h-full w-full flex-col gap-3">
+                <ul>
+                  {navItems.slice(i * 3, i * 3 + 3).map((item, index) => (
+                    <li key={index}>
+                      <Link
+                        href={item.href}
+                        className="flex cursor-pointer rounded-3xl px-4 py-1 hover:bg-neutral-300 dark:hover:bg-neutral-500"
+                      >
+                        <span>{item.icon}</span>
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </nav>
         </div>
+      </aside>
+      <div className="h-full w-full px-3 max-md:block md:hidden">
+        <main className="h-[95%] w-full overflow-auto rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+          {children}
+        </main>
       </div>
     </div>
   );

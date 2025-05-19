@@ -26,7 +26,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-screen w-screen overflow-x-hidden bg-zinc-900 text-zinc-100 ${poppins.className} font-sans`}
+          className={`grid h-dvh h-screen w-screen place-items-center overflow-hidden bg-zinc-900 text-zinc-100 ${poppins.className} font-sans`}
         >
           <PostHogProvider>
             <ThemeProvider
