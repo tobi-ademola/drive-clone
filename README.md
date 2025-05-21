@@ -23,9 +23,10 @@
 - [x] Redesign the breadcrunmbs UI
 - [x] Access Control
 - [x] Implement item actions: file upload
-- [ ] Implement item actions: folder creation
+- [x] Implement item actions: folder creation
 - [x] Implement item actions: folder upload
-- [ ] Add the New button on the mobile interface
+- [ ] Add the New button on mobile interfaces
+- [x] Add a different data table to render on mobile interfaces
 - [ ] Folder deletions (perhaps renames)
 - [ ] Disable a file row while its being deleted
 - [ ] Create a file view page
@@ -33,4 +34,4 @@
 - [ ] Modify file deletion
 - [ ] Modify onboarduser folders creation
 - [ ] Confirm files that belong to a user and indicate with "me" and the email for other users
-- [ ] Create the search dropdown
+- [ ] Create the search feature

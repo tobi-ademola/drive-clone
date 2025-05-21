@@ -78,6 +78,39 @@ export const MUTATIONS = {
     });
   },
 
+  createFolder: async function (
+    name: string,
+    currentFolderId: number,
+    userId: string,
+  ) {
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(
+          eq(foldersSchema.name, name),
+          eq(foldersSchema.parent, currentFolderId),
+        ),
+      )
+      .limit(1)
+      .execute();
+
+    if (folders.length === 0) {
+      const newFolderId = await db
+        .insert(foldersSchema)
+        .values({
+          ownerId: userId,
+          name: name,
+          parent: currentFolderId,
+        })
+        .$returningId();
+
+      return newFolderId[0];
+    }
+
+    return `Folder named ${name} already exist!`;
+  },
+
   generateFolderUploadPaths: async function (
     currentFolderId: number,
     relPathsNames: string[],

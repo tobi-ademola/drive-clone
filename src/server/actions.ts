@@ -66,3 +66,20 @@ export async function generateFolderUploadPaths(
 
   return relPathsId;
 }
+
+export async function createFolder(name: string, currentFolderId: number) {
+  const session = await auth();
+  if (!session.userId) {
+    return { error: "Unauthorised" };
+  }
+  if (!name) return { error: "Name must be defined" };
+  if (!currentFolderId) return { error: "Parent folder must be defined" };
+
+  const result = await MUTATIONS.createFolder(
+    name,
+    currentFolderId,
+    session.userId,
+  );
+
+  return result;
+}

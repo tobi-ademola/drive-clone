@@ -35,6 +35,7 @@ import {
   useCallback,
   type ChangeEvent,
   useEffect,
+  type MouseEvent,
 } from "react";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { Button } from "~/components/ui/button";
@@ -56,7 +57,7 @@ import {
 } from "~/components/ui/resizable";
 import { useRouter } from "next/navigation";
 import { uploadFiles } from "~/components/uploadthing";
-import { generateFolderUploadPaths } from "~/server/actions";
+import { createFolder, generateFolderUploadPaths } from "~/server/actions";
 import {
   Dialog,
   DialogClose,
@@ -240,6 +241,27 @@ export default function DriveLayout({
     folderId: params.folderId,
   });
 
+  const handleFolderCreation = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setNewFolderDialogOpen(false);
+
+      if (!lockedParamsRef.current.folderId)
+        throw new Error(`Parent folder must be defined!`);
+
+      if (!newFolderName) throw new Error(`Folder name must be defined`);
+
+      const result = await createFolder(
+        newFolderName,
+        Number(lockedParamsRef.current.folderId),
+      );
+
+      console.log(result);
+      navigate.refresh();
+    },
+    [newFolderName, navigate],
+  );
+
   useEffect(() => {
     if (dirFiles.length > 0 && !isUploading) {
       if (!user.userId) {
@@ -404,7 +426,7 @@ export default function DriveLayout({
       <div className="h-full w-full max-md:hidden md:block">
         <ResizablePanelGroup
           direction="horizontal"
-          className="px-3 py-3 md:px-6"
+          className="px-3 py-3 md:px-4 lg:px-6"
         >
           <ResizablePanel
             defaultSize={(2 / 12) * 100}
@@ -476,7 +498,7 @@ export default function DriveLayout({
                   <DialogPortal data-slot="dialog-portal">
                     <DialogOverlay />
 
-                    <DialogContent>
+                    <DialogContent className="text-neutral-700 dark:text-neutral-200">
                       <DialogHeader className="text-left">
                         <DialogTitle>New Folder</DialogTitle>
                       </DialogHeader>
@@ -493,13 +515,18 @@ export default function DriveLayout({
                             Close
                           </Button>
                         </DialogClose>
-                        <Button type="submit">Create</Button>
+                        <Button
+                          type="button"
+                          onClick={(e) => handleFolderCreation(e)}
+                        >
+                          Create
+                        </Button>
                       </DialogFooter>
                     </DialogContent>
                   </DialogPortal>
                 </Dialog>
               </div>
-              <div>
+              <div className="text-sm lg:text-base">
                 <nav className="flex h-full w-full flex-col gap-8 pt-4 pr-4 text-sm lg:text-base">
                   {Array.from(
                     { length: Math.ceil(navItems.length / 3) },
@@ -535,7 +562,7 @@ export default function DriveLayout({
             defaultSize={(10 / 12) * 100}
             className="rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
           >
-            <main className="overflow-auto px-6">{children}</main>
+            <main className="min-h-full overflow-auto px-6">{children}</main>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
@@ -622,8 +649,20 @@ export default function DriveLayout({
         </div>
       </aside>
       <div className="h-full w-full px-3 max-md:block md:hidden">
-        <main className="h-[95%] w-full overflow-auto rounded-lg bg-neutral-100 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+        <main className="h-[95%] w-full overflow-auto rounded-lg bg-neutral-100 px-3 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
           {children}
+
+          <div className="absolute right-6 bottom-3 z-20 flex flex-col gap-2">
+            <Button
+              variant={"default"}
+              size={"icon"}
+              className="rounded-xl bg-blue-400 p-4 text-black hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+              aria-label="New folder icon"
+              onClick={() => setNewFolderDialogOpen(true)}
+            >
+              <FolderPlusIcon className="aspect-square w-4 scale-125" />
+            </Button>
+          </div>
         </main>
       </div>
     </div>
