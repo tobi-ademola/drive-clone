@@ -583,7 +583,7 @@ export default function DriveLayout({
         {/* <div className="flex w-full items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="h-16 w-30 cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
+              <Button className="h-16 w-30 h-full cursor-pointer rounded-xl bg-neutral-300 py-4 font-semibold text-neutral-900 hover:bg-neutral-400 dark:bg-neutral-700 dark:text-neutral-200">
                 <PlusIcon className="mr-2 aspect-square w-4 scale-115" />
                 New
               </Button>
@@ -649,18 +649,33 @@ export default function DriveLayout({
         </div>
       </aside>
       <div className="h-full w-full px-3 max-md:block md:hidden">
-        <main className="h-[95%] w-full overflow-auto rounded-lg bg-neutral-100 px-3 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+        <main className="h-[95%] w-full overflow-auto rounded-lg bg-neutral-100 px-3 pb-96 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
           {children}
 
-          <div className="absolute right-6 bottom-3 z-20 flex flex-col gap-2">
+          <div className="absolute right-6 bottom-3 z-20 grid aspect-[1/3] w-18 gap-2">
             <Button
               variant={"default"}
-              size={"icon"}
-              className="rounded-xl bg-blue-400 p-4 text-black hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+              className="h-full cursor-pointer rounded-xl bg-blue-400 text-black hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
               aria-label="New folder icon"
               onClick={() => setNewFolderDialogOpen(true)}
             >
-              <FolderPlusIcon className="aspect-square w-4 scale-125" />
+              <FolderPlusIcon />
+            </Button>
+            <Button
+              variant={"default"}
+              className="h-full cursor-pointer rounded-xl bg-blue-400 text-black hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+              aria-label="Upload file icon"
+              onClick={initiateFileUpload}
+            >
+              <FileUpIcon />
+            </Button>
+            <Button
+              variant={"default"}
+              className="h-full cursor-pointer rounded-xl bg-blue-400 text-black hover:bg-blue-500 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+              aria-label="Upload folder icon"
+              onClick={initiateFolderUpload}
+            >
+              <FolderUpIcon />
             </Button>
           </div>
         </main>

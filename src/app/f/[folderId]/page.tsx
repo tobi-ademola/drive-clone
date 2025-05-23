@@ -101,7 +101,7 @@ export default async function GoogleDriveClone(props: {
         </Breadcrumb>
       </section>
       {/* For viewport widths less than 640px */}
-      <section className="my-4 h-full w-full max-sm:block sm:hidden">
+      <section className="my-4 w-full max-sm:block sm:hidden">
         {data.length > 0 ? (
           data.map((item, index) => {
             // Type guard to check if item is a file
@@ -121,7 +121,7 @@ export default async function GoogleDriveClone(props: {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex w-full items-center gap-4 px-2 py-3"
+                    className="flex w-full items-center gap-4 overflow-hidden px-2 py-3"
                   >
                     <FileIcon className="aspect-square w-6" />
                     <div className="flex flex-col">
@@ -144,7 +144,7 @@ export default async function GoogleDriveClone(props: {
                 >
                   <Link
                     href={`/f/${item.id}`}
-                    className="flex w-full items-center gap-4 px-2 py-3"
+                    className="flex w-full items-center gap-4 overflow-hidden px-2 py-3"
                   >
                     <FolderIcon className="aspect-square w-6" />
 
