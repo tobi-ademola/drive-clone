@@ -25,13 +25,14 @@
 - [x] Implement item actions: file upload
 - [x] Implement item actions: folder creation
 - [x] Implement item actions: folder upload
-- [ ] Add the New button on mobile interfaces
+- [x] Add the New button on mobile interfaces
 - [x] Add a different data table to render on mobile interfaces
-- [ ] Folder deletions (perhaps renames)
+- [ ] Modify file deletion
+- [ ] Add Folder deletions
+- [ ] Add actions to files and folders (rename, download, share, move, copy link)
 - [ ] Disable a file row while its being deleted
 - [ ] Create a file view page
 - [ ] Update schemas to add allowedUsers, fileKey, and isHidden
-- [ ] Modify file deletion
 - [ ] Modify onboarduser folders creation
 - [ ] Confirm files that belong to a user and indicate with "me" and the email for other users
 - [ ] Create the search feature
