@@ -52,6 +52,8 @@ export const ourFileRouter = {
 
       console.log("file url", file.ufsUrl);
 
+      console.log("file object", { ...file });
+
       await MUTATIONS.createFile({
         file: {
           name: file.name,

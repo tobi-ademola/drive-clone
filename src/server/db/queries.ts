@@ -46,7 +46,8 @@ export const QUERIES = {
     const folder = await db
       .select()
       .from(foldersSchema)
-      .where(eq(foldersSchema.id, folderId));
+      .where(eq(foldersSchema.id, folderId))
+      .limit(1);
     return folder[0];
   },
   getRootFolderForUser: async function (userId: string) {
@@ -77,11 +78,93 @@ export const MUTATIONS = {
     });
   },
 
+  createFolder: async function (
+    name: string,
+    currentFolderId: number,
+    userId: string,
+  ) {
+    const folders = await db
+      .select()
+      .from(foldersSchema)
+      .where(
+        and(
+          eq(foldersSchema.name, name),
+          eq(foldersSchema.parent, currentFolderId),
+        ),
+      )
+      .limit(1)
+      .execute();
+
+    if (folders.length === 0) {
+      const newFolderId = await db
+        .insert(foldersSchema)
+        .values({
+          ownerId: userId,
+          name: name,
+          parent: currentFolderId,
+        })
+        .$returningId();
+
+      return newFolderId[0];
+    }
+
+    return `Folder named ${name} already exist!`;
+  },
+
+  generateFolderUploadPaths: async function (
+    currentFolderId: number,
+    relPathsNames: string[],
+    userId: string,
+  ): Promise<number[]> {
+    const relPathsId: number[] = [currentFolderId];
+
+    for (let i = 0; i < relPathsNames.length - 1; i++) {
+      console.log(
+        `Checking for folder "${relPathsNames[i]}" under parent ID ${relPathsId[i]}`,
+      );
+
+      const folders = await db
+        .select()
+        .from(foldersSchema)
+        .where(
+          and(
+            eq(foldersSchema.name, relPathsNames[i]!),
+            eq(foldersSchema.parent, relPathsId[i]!),
+          ),
+        )
+        .limit(1)
+        .execute();
+
+      if (folders.length === 0) {
+        console.log(`Folder not found, creating: ${relPathsNames[i]}`);
+
+        const newFolderId = await db
+          .insert(foldersSchema)
+          .values({
+            ownerId: userId,
+            name: relPathsNames[i]!,
+            parent: relPathsId[i],
+          })
+          .$returningId();
+
+        console.log(`Created folder with ID: ${newFolderId[0]?.id}`);
+
+        if (newFolderId[0]) relPathsId.push(newFolderId[0]?.id);
+      } else {
+        console.log(`Folder exists with ID: ${folders[0]?.id}`);
+        if (folders[0]) relPathsId.push(folders[0]?.id);
+        continue;
+      }
+    }
+
+    return relPathsId;
+  },
+
   onboardUser: async function (userId: string) {
     const rootFolder = await db
       .insert(foldersSchema)
       .values({
-        name: "Root",
+        name: "My Drive",
         parent: null,
         ownerId: userId,
       })
